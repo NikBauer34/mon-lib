@@ -51,6 +51,7 @@ import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 import ModeProvider from "./lib/providers/ThemeProvider";
 import { Separator } from "./ui/separator";
 import { Progress } from "./ui/progress";
+import { PasswordInput } from "./ui/password-input";
 import {
   Select,
   SelectContent,
@@ -168,4 +169,5 @@ export {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PasswordInput
 }

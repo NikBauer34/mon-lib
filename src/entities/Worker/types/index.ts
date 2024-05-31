@@ -1,4 +1,5 @@
 import { IRole } from "@/entities";
+import { JWT } from "next-auth/jwt";
 
 export interface IWorker {
   _id: number;
@@ -12,6 +13,6 @@ export interface IWorker {
 }
 export interface LoginData {
   worker: IWorker;
-  token: string;
+  token: JWT;
   roles: IRole[]
 }

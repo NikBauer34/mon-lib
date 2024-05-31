@@ -1,3 +1,4 @@
+
 import { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
@@ -14,12 +15,12 @@ export const metadata: Metadata = {
 export default function AuthenticationPage() {
   return (
     <>
-      <div className="w-full lg:grid lg:min-h-[960px] lg:grid-cols-2 xl:min-h-[960px]">
+      <div className="w-full lg:grid  lg:grid-cols-2 min-h-screen dark:bg-muted/15 bg-muted/40">
         <Link
           href="/examples/authentication"
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            "absolute right-4 top-4 md:right-8 md:top-8"
+            "absolute right-4 top-4 md:right-8 md:top-8 dark:text-white dark:hover:text-black"
           )}
         >
           Бот

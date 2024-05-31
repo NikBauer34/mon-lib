@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { Badge, ToastAction, cn, useToast } from "@/shared"
+import { Badge, PasswordInput, ToastAction, cn, useToast } from "@/shared"
 import { useInput } from "@/entities"
 import { Button } from "@/shared"
 import { Input } from "@/shared"
@@ -86,12 +86,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             <Label htmlFor="password">
               Пароль
             </Label>
-            <Input
-              id="password"
-              type="password"
-              autoCapitalize="none"
-              autoComplete="none"
-              autoCorrect="off"
+            <PasswordInput
               {...password}
               defaultValue={''}
               disabled={isLoading}

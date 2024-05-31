@@ -1,4 +1,3 @@
-
 import { signin } from "@/features";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import  CredentialsProvider from 'next-auth/providers/credentials'
@@ -58,27 +57,23 @@ export const authOptions: NextAuthOptions = {
         }
 
         return {
-          token: ((data.token) as unknown) as JWT,
-          name: data.worker.name,
-          surname: data.worker.surname, 
-          login: data.worker.login,
-          roles: data.roles
+          name: 'Вася',
+          id: '1'
         }
       },
     })
   ],
   callbacks: {
     jwt(params) {
-      if (params.user?.roles) {
-        params.token.role = params.user.roles
-        params.token = params.user.token
+      if (params.user) {
+        params.token.name = params.user.name
       }
 
       return params.token
     },
     session({ session, token}) {
       if (session.user) {
-        (session.user as { roles: IRole[] }).roles = token.roles as IRole[]
+        (session.user as { id: string }).id = token.id as string
       }
       return session
     },
