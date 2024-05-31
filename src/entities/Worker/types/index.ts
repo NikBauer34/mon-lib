@@ -1,0 +1,17 @@
+import { IRole } from "@/entities";
+
+export interface IWorker {
+  _id: number;
+  name: string;
+  surname: string;
+  login: string;
+  password: string;
+  chatId: number | null;
+  library: number;
+  unread_buckets: number;
+}
+export interface LoginData {
+  worker: IWorker;
+  token: string;
+  roles: IRole[]
+}
