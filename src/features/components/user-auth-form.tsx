@@ -95,7 +95,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             {(password.isDirty && password.minLengthError.value) && <Badge variant={'destructive'}>{password.minLengthError.message}</Badge>}
             {(password.isDirty && password.maxLengthError.value) && <Badge variant={'destructive'}>{password.maxLengthError.message}</Badge>}
           </div>
-          <Button disabled={isLoading || (!login.isInputValid || !password.isInputValid)} type="submit">
+          <Button disabled={isLoading || (!login.isInputValid || !password.isInputValid)} onClick={async (e) => onSubmit(e)}>
             {isLoading &&
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             }

@@ -13,13 +13,13 @@ import { signOut } from "next-auth/react";
 export default function Sidebar({children, unread_buckets, roles}: {children: ReactNode, unread_buckets: number, roles: string[]}) {
 
   return (
-    <div className="grid min-h-screen w-full md:grid-cols-[70px_1fr] lg:grid-cols-[280px_1fr]">
-      <div className="hidden border-r bg-muted/40 md:block">
+    <div className="grid min-h-screen w-full md:grid-cols-[70px_1fr] lg:grid-cols-[280px_1fr] bg-background">
+      <div className="hidden border-r bg-background md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold">
-              <Package2 className="h-6 w-6"/>
-              <span className="lg:block hidden">Acme Inc</span>
+              <Package2 className="h-6 w-6 bg-background"/>
+              <span className="lg:block hidden text-textcolor">Acme Inc</span>
             </Link>
             
 
@@ -29,34 +29,28 @@ export default function Sidebar({children, unread_buckets, roles}: {children: Re
         </div>
       </div>
       <div className="flex flex-col w-full">
-        <header className="flex h-14 items-center lg:h-[60px] bg-muted/40">
+      <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 bg-background">
           <Sheet>
             <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="shrink-0 md:hidden"
-              >
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle navigation menu</span>
+              <Button size="icon" variant="outline" className="sm:hidden">
+                <PanelLeft className="h-5 w-5" />
+                <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="flex flex-col w-full min-[500px]:w-3/4">
-              <nav className="grid gap-2 text-lg font-medium">
+            <SheetContent side="left" className="sm:max-w-xs">
+              <nav className="grid gap-6 text-lg font-medium">
                 <Link
                   href="#"
-                  className="flex items-center gap-2 text-lg font-semibold"
+                  className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
                 >
-                  <Package2 className="h-6 w-6 pb-2" />
+                  <Package2 className="h-5 w-5 transition-all group-hover:scale-110" />
                   <span className="sr-only">Acme Inc</span>
                 </Link>
                 <BurgerMenu unread_buckets={unread_buckets} roles={roles}/>
-          
               </nav>
-              
             </SheetContent>
           </Sheet>
-          <Breadcrumb className="hidden md:flex pl-4">
+          <Breadcrumb className="hidden md:flex">
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
@@ -66,25 +60,25 @@ export default function Sidebar({children, unread_buckets, roles}: {children: Re
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="#">Orders</Link>
+                  <Link href="#">Products</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>Recent Orders</BreadcrumbPage>
+                <BreadcrumbPage>Edit Product</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
-          <div className="relative ml-auto flex-1 mr-2 grow-1 md:grow-0">
+          <div className="relative ml-auto flex-1 md:grow-0">
             <search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Search..."
-              className="w-full rounded-lg bg-background pl-8 md:w-[250px] lg:w-[336px]"
+              className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
             />
           </div>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild className="mr-2">
+            <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
                 size="icon"

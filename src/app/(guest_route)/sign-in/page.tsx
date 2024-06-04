@@ -1,4 +1,4 @@
-import { LoginForm } from "@/widgets"
+import { LoginForm, TestLogin } from "@/widgets"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 const SignIn = () => {
   return (
     <>
-      <LoginForm />
+      <LoginForm/>
     </>
   )
 }

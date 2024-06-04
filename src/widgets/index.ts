@@ -5,6 +5,8 @@ import SidebarSkeleton from "./components/SidebarSkeleton";
 import InitiatePage from "./components/InitiateForm";
 import {BD} from './components/BookDetails'
 import RootLayoutComp from "./components/RootLayoutComp";
+import BookCreate from "./components/BookCreate";
+import TestLogin from "./components/TestLogin";
 export {
   LoginForm,
   Navbar,
@@ -12,5 +14,7 @@ export {
   SidebarSkeleton,
   InitiatePage,
   BD,
-  RootLayoutComp
+  RootLayoutComp,
+  BookCreate,
+  TestLogin
 }

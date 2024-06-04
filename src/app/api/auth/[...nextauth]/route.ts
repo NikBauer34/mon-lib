@@ -4,6 +4,7 @@ import  CredentialsProvider from 'next-auth/providers/credentials'
 import { IRole } from "@/entities";
 import { DefaultSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
+import { StyledString } from "next/dist/build/swc";
 
 // declare module "next-auth" {
 //   interface User {
@@ -55,10 +56,14 @@ export const authOptions: NextAuthOptions = {
         if (typeof data == 'string') {
           throw Error(`${data}`)
         }
+        setTimeout(async() => console.log('ok'), 1000)
 
         return {
-          name: 'Вася',
-          id: '1'
+          name: data.worker.name,
+          surname: data.worker.surname,
+          login: data.worker.login,
+          token: data.token,
+          roles: data.roles
         }
       },
     })
@@ -66,14 +71,16 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     jwt(params) {
       if (params.user) {
-        params.token.name = params.user.name
+        params.token.token = params.user.token
+        params.token.roles = params.user.roles
       }
 
       return params.token
     },
     session({ session, token}) {
       if (session.user) {
-        (session.user as { id: string }).id = token.id as string
+        (session.user as { roles: IRole[] }).roles = token.roles as IRole[]
+        (session.user as { token: JWT}).token = token.token as JWT
       }
       return session
     },

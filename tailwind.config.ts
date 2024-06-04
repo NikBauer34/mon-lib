@@ -47,6 +47,9 @@ const config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        textcolor: "hsl(var(--textcolor))",
+        inversebg: "hsl(var(--inverse-background))",
+        inversetc: "hsl(var(--inverse-textcolor))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

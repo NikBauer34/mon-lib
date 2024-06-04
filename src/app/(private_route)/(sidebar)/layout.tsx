@@ -6,18 +6,25 @@ import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { ReactNode, Suspense } from "react";
 import Loading from "./loading";
+import { redirect } from "next/navigation";
 export const metadata: Metadata = {
   title: 'Unilib',
   description: 'Админ-панель библиотеки unilib'
 }
 
 const RootLayout = async ({ children }: {children: ReactNode}) => {
-  let unread_buckets = 4
+  const session = await getServerSession(authOptions)
+  const data = await get_unread_buckets('Bearer ' + String(session?.user?.token))
+//   let unread_buckets = worker.unread_buckets
+//   let roles = worker_roles.map(el => el.value)
+  let unread_buckets = 45
   return (
     <>
+    <Suspense fallback={<SidebarSkeleton/>}>
       <Sidebar unread_buckets={unread_buckets} roles={['Библиотекарь']}>
         {children}
       </Sidebar>
+    </Suspense>
     </>
   )
 }

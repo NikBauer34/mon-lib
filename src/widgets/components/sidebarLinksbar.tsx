@@ -1,8 +1,9 @@
 "use client"
 import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, Sheet, SheetContent, SheetTrigger } from "@/shared";
 import { Bell, Book, CircleUser, GraduationCap, Home, LineChart, LucideIcon, Menu, Package, Package2, ShoppingBasket, ShoppingCart, TicketSlash, Users } from "lucide-react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 interface IOptions {
   href: string,
   title: string,
@@ -10,6 +11,12 @@ interface IOptions {
 }
 const LinksBar = ({unread_buckets, is_burger, role}: {unread_buckets: number, is_burger: boolean, role: string}) => {
   const [selected, setSelected] = useState('Главная')
+  const {theme, resolvedTheme} = useTheme()
+  let mounted = useMemo(() => theme, [theme])
+  // useEffect(() => {
+  //   console.log('theme ', resolvedTheme)
+  // }, [])
+  // console.log(resolvedTheme)
   let LibrarianOptions: IOptions[] = [
     {
       href: '/',
@@ -17,9 +24,14 @@ const LinksBar = ({unread_buckets, is_burger, role}: {unread_buckets: number, is
       icon: <Home className="h-8" />
     },
     {
-      href: '/books',
+      href: '/',
       title: 'Книги',
       icon: <Book className="h-8" />
+    },
+    {
+      href: '/',
+      title: 'Корзины',
+      icon: <ShoppingBasket className="h-8" />
     }
   ]
   function get() { 
@@ -38,7 +50,7 @@ const LinksBar = ({unread_buckets, is_burger, role}: {unread_buckets: number, is
       {roleOptions.map(el => 
         <Link 
           href={el.href}
-          className={`flex ${selected == el.title ? "bg-dark-1 text-white": "bg-sky-2"} items-center gap-3 rounded-lg px-3 py-2 transition-all md:hover:text-primary h-15 ${!is_burger ? "max-md:w-[50px]" : ""}`}
+          className={`flex ${selected == el.title ? resolvedTheme=='light' ?"bg-dark-1 text-white" : "bg-white text-black" : resolvedTheme=='light' ? "bg-white text-black" : "bg-black/5 text-white"} items-center gap-3 rounded-lg px-3 py-2 transition-all md:hover:text-primary h-15 ${!is_burger ? "max-md:w-[50px]" : ""}`}
           onClick={() => setSelected(el.title)}
         >
           {el.icon}
@@ -47,19 +59,6 @@ const LinksBar = ({unread_buckets, is_burger, role}: {unread_buckets: number, is
         </Link>
         
       )}
-      {role == 'Библиотекарь' &&
-        <Link
-          href="#"
-          className={`flex ${selected == 'Корзины' ? "bg-dark-1 text-white" : "bg-sky-2"} items-center gap-3 rounded-lg px-3 py-2 transition-all md:hover:text-primary h-15 ${!is_burger ? "max-md:w-[50px]" : ""}`}
-          onClick={() => setSelected('Корзины')}
-      >
-        <ShoppingBasket className="h-8"/>
-        <h1 className={`text-[20px] ${!is_burger ? "lg:block hidden": ""} `}>Корзины</h1>
-        <Badge className={`ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full lg:block p-0 pl-[6.5px] pt-[3px] ${is_burger? "pl-0 pt-0": ""}`}>
-          {unread_buckets}
-        </Badge>
-      </Link>
-      }
     </>
   )
 }
