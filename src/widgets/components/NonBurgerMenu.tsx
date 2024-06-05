@@ -21,7 +21,7 @@ export default function NonBurgerMenu({unread_buckets, roles}: {unread_buckets: 
               {roles.length > 1 && all_roles[roleOrder] == 'Администратор' &&
                 <ShieldCheck onClick={() => setRoleOrder(0)}/>
               }
-            <LinksBar unread_buckets={unread_buckets} is_burger={false} role={'Библиотекарь'}/>
+            <LinksBar unread_buckets={unread_buckets} is_burger={false} role={all_roles[roleOrder]}/>
             </nav>
           </div>
   )

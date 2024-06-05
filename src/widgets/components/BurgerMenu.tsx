@@ -10,10 +10,10 @@ export default function BurgerMenu({unread_buckets, roles}: {unread_buckets: num
     <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4 pt-2 gap-7">
               {roles.length > 1 &&
-                <Tabs defaultValue={roles[0]} className="w-[400px]">
+                <Tabs defaultValue={roles[0]} className="w-[200px]">
                   <TabsList className="grid w-full grid-cols-2">
                     {roles.map(el => 
-                      <TabsTrigger onClick={() => setRole(el)} value={el}></TabsTrigger>
+                      <TabsTrigger onClick={() => setRole(el)} value={el}>{el}</TabsTrigger>
                     )}
                   </TabsList>
                 </Tabs>

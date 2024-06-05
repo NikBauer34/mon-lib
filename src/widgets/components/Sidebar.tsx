@@ -1,9 +1,9 @@
-
+"use client"
 import { Badge, Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, Input, Label, Pagination, PaginationContent, PaginationItem, Progress, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Separator, Sheet, SheetContent, SheetTrigger, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipTrigger,TooltipProvider } from "@/shared";
 import { Bell, CircleUser, Home, LineChart, Menu, Package, Package2, PanelLeft, ShoppingCart, Users, Users2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import LinksBar from "./sidebarLinksbar";
 import { ProfileDropdown } from "@/features";
 import NonBurgerMenu from "./NonBurgerMenu";
@@ -11,7 +11,11 @@ import BurgerMenu from "./BurgerMenu";
 import { signOut } from "next-auth/react";
 
 export default function Sidebar({children, unread_buckets, roles}: {children: ReactNode, unread_buckets: number, roles: string[]}) {
-
+  let [ready, setReady] = useState(false)
+  useEffect(() => {
+    setReady(true)
+  }, [])
+  if (!ready) return null
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[70px_1fr] lg:grid-cols-[280px_1fr] bg-background">
       <div className="hidden border-r bg-background md:block">

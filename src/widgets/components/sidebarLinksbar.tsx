@@ -12,6 +12,7 @@ interface IOptions {
 const LinksBar = ({unread_buckets, is_burger, role}: {unread_buckets: number, is_burger: boolean, role: string}) => {
   const [selected, setSelected] = useState('Главная')
   const {theme, resolvedTheme} = useTheme()
+  console.log('role ', role)
   let mounted = useMemo(() => theme, [theme])
   // useEffect(() => {
   //   console.log('theme ', resolvedTheme)
@@ -34,14 +35,24 @@ const LinksBar = ({unread_buckets, is_burger, role}: {unread_buckets: number, is
       icon: <ShoppingBasket className="h-8" />
     }
   ]
+  let AdminOptions: IOptions[] = [{
+    href:'/',
+    title: 'Главная',
+    icon: <Home className="h-8" />
+  }]
   function get() { 
     if (role == 'Библиотекарь') {
+      console.log('yeah')
       return LibrarianOptions
     } else {
-      return LibrarianOptions
+      console.log('no')
+      return AdminOptions
     }
   }
   let [roleOptions, setRoleOptions] = useState<IOptions[]>(get())
+  useEffect(() => {
+    setRoleOptions(get())
+  }, [role])
   // if (role == 'Библиотекарь') {
   //   setRoleOptions([...roleOptions, ...LibrarianOptions])
   // }

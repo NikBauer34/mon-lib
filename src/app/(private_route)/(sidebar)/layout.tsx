@@ -15,13 +15,16 @@ export const metadata: Metadata = {
 const RootLayout = async ({ children }: {children: ReactNode}) => {
   const session = await getServerSession(authOptions)
   const data = await get_unread_buckets('Bearer ' + String(session?.user?.token))
-//   let unread_buckets = worker.unread_buckets
-//   let roles = worker_roles.map(el => el.value)
-  let unread_buckets = 45
+  let {worker, worker_roles} = data
+  let unread_buckets = worker.unread_buckets
+  let roles = worker_roles.map(el => el.value)
+  console.log(unread_buckets)
+  console.log(roles)
+  // let unread_buckets = 45
   return (
     <>
     <Suspense fallback={<SidebarSkeleton/>}>
-      <Sidebar unread_buckets={unread_buckets} roles={['Библиотекарь']}>
+      <Sidebar unread_buckets={unread_buckets} roles={roles}>
         {children}
       </Sidebar>
     </Suspense>
