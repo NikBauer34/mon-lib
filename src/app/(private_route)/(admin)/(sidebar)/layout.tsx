@@ -5,7 +5,6 @@ import { Navbar, Sidebar, SidebarSkeleton } from "@/widgets";
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { ReactNode, Suspense } from "react";
-import Loading from "./loading";
 import { redirect } from "next/navigation";
 export const metadata: Metadata = {
   title: 'Unilib',
@@ -24,7 +23,7 @@ const RootLayout = async ({ children }: {children: ReactNode}) => {
   return (
     <>
     <Suspense fallback={<SidebarSkeleton/>}>
-      <Sidebar unread_buckets={unread_buckets} roles={roles}>
+      <Sidebar unread_buckets={unread_buckets} roles={['Библиотекарь', 'Администратор']}>
         {children}
       </Sidebar>
     </Suspense>

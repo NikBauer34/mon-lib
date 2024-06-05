@@ -5,14 +5,9 @@ import { ReactNode } from "react";
 
 const LibrarianLayout = async ({children}: {children: ReactNode}) => {
   const session = await getServerSession(authOptions)
-  if (session?.user && session.user.roles) {
-    let roles = session.user.roles.map(el => el.value)
-    if (!roles.includes('Библиотекарь')) {
-      redirect('/sign-in')
-    }
-  } else {
-    redirect('/sign-in')
-  }
+  if (!session?.user) redirect('sign-in')
+  let roles = session.user.roles.map(el => el.value)
+  if (!roles.includes('Библиотекарь')) redirect('sign-in')
   return <>{children}</>
 }
 export default LibrarianLayout
