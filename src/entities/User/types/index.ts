@@ -1,13 +1,11 @@
-interface UserSettings {
-  isNotifiedDaily: boolean
-}
+import { JWT } from "next-auth/jwt"
+
 export interface IUser {
-  _id: number;
-  login: string;
-  password: string;
-  fine_coins: number;
-  pleasure_coins: number;
-  chatId: string | null;
-  accounts: number[];
-  settings: UserSettings
+  email: string
+}
+export interface LoginData {
+  user: IUser,
+  accessToken: JWT,
+  refreshToken: JWT
+  expiresIn: number
 }

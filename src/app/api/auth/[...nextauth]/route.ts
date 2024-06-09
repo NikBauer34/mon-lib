@@ -1,92 +1,66 @@
 import { signin } from "@/features";
+import { $api } from "@/shared";
 import NextAuth, { NextAuthOptions } from "next-auth";
-import  CredentialsProvider from 'next-auth/providers/credentials'
-import { IRole } from "@/entities";
-import { DefaultSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
-import { StyledString } from "next/dist/build/swc";
+import CredentialsProvider from "next-auth/providers/credentials";
+async function refreshToken(token: JWT): Promise<JWT> {
+  const res = await $api.get<{accessToken: JWT, refreshToken: JWT, expiresIn: number}>('/auth/refresh', {
+    headers: {
+      authorization: `${token.refreshToken}`,
+    },
+  });
 
-// declare module "next-auth" {
-//   interface User {
-//     name: string;
-//     surname: string;
-//     login: string;
-//     token: string;
-//     roles: IRole[];
-
-//   }
-//   interface Session extends DefaultSession {
-//     user?: {
-//       name: string;
-//       surname: string;
-//       login: string;
-//       token: string;
-//       roles: IRole[];
-//     }
-//   }
-// }
-
-// import { JWT } from "next-auth/jwt";
-
-// declare module "next-auth/jwt" {
-//   interface JWT {
-//     roles: IRole[];
-//     token: string
-//   }
-// }
+  return {
+    ...token,
+    accessToken: res.data.accessToken
+  };
+}
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt'
   },
   providers: [
     CredentialsProvider({
-      type: 'credentials',
+      name: 'Credentials',
       credentials: {
-        loginValue: {type: 'text'},
-        passwordValue: {type: 'text'}
+        username: {
+          label: 'username',
+          type: 'text'
+        },
+        password: {label: 'password', type: 'password'}
       },
       async authorize(credentials, req) {
-        const {loginValue, passwordValue} = credentials as {
-          loginValue: string;
-          passwordValue: string
-        }
-
-        const data = await signin(loginValue, passwordValue)
-        console.log(data)
+        if (!credentials?.username || !credentials?.password) return null;
+        const { username, password } = credentials;
+        const data = await signin(username, password)
         if (typeof data == 'string') {
           throw Error(`${data}`)
         }
-        setTimeout(async() => console.log('ok'), 1000)
-
         return {
-          name: data.worker.name,
-          surname: data.worker.surname,
-          login: data.worker.login,
-          token: data.token,
-          roles: data.roles
+          username,
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+          expiresIn: data.expiresIn
         }
       },
+      
     })
   ],
   callbacks: {
-    jwt(params) {
-      if (params.user) {
-        params.token.token = params.user.token
-        params.token.roles = params.user.roles
-      }
+    async jwt({token, user}) {
+      if (user) return {...token, ...user}
 
-      return params.token
-    },
-    session({ session, token}) {
-      if (session.user) {
-        (session.user as { roles: IRole[] }).roles = token.roles as IRole[]
-        (session.user as { token: JWT}).token = token.token as JWT
+      if (new Date().getTime() < token.expiresIn) {
+        return token
       }
+      return await refreshToken(token)
+    },
+    async session({token, session}) {
+      session.user = {...token}
       return session
     },
   }
 }
+const handler = NextAuth(authOptions);
 
-const authHandler = NextAuth(authOptions)
-
-export { authHandler as GET, authHandler as POST}
+export { handler as GET, handler as POST };

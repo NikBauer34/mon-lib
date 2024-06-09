@@ -1,12 +1,11 @@
 "use server"
 
-import { IWorker, LoginData } from "@/entities"
+import { LoginData } from "@/entities"
 import { $api } from "@/shared"
-import axios from "axios"
 
-export default async function signin(login: string, password: string): Promise<LoginData | string> {
+export default async function signin(username: string, password: string): Promise<LoginData | string> {
   try {
-    const res = await $api.post(`/auth/login`, {login, password})
+    const res = await $api.post(`/auth/login`, {username, password})
     return res.data as LoginData
   } catch (e: any) {
     return e?.response?.data?.message
