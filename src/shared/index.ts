@@ -13,6 +13,7 @@ import { Badge } from "./ui/badge";
 import { cn } from "./lib/utils";
 import {PasswordInput} from './ui/password-input' 
 import { Separator } from "./ui/separator";
+import { Pagination} from './ui/pagination'
 import {Sheet,
   SheetContent,
   SheetDescription,
@@ -81,5 +82,6 @@ export {
   AlertDialogTrigger,
   Textarea,
   Checkbox,
-  Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage
+  Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage,
+  Pagination
 }

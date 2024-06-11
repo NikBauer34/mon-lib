@@ -21,7 +21,7 @@ export default function FileUploader({imageURL, onFieldChange}: FileUploaderProp
 
       {imageURL ? (
         <div className="flex h-full w-full flex-1 justify-center">
-          <Image src={imageURL} alt="image" width={250} height={250} className="w-full object-cover object-center"/>
+          <img src={imageURL} alt="image" width={250} height={250} className="w-full object-cover object-center"/>
         </div>
       ) : (
         <div className="flex-center flex-col py-5 text-grey-500">

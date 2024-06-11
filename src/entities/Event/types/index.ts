@@ -27,14 +27,28 @@ export type CreateEventParams = {
   }
 }
 export type IEvent = {
-  title: string
-    description: string
-    location: string
-    imageUrl: string
-    startDateTime: Date
-    endDateTime: Date
-    categoryId: string
-    price: string
-    isFree: boolean
-    url: string
+  _id: string
+  title: string;
+        description: string;
+        location: string;
+        imageURL: string;
+        startDate: Date;
+        endDate: Date;
+        category: string;
+        price: string;
+        isFree: boolean;
+        siteURL: string;
+}
+export type UpdateEvent = {
+  _id: string
+  title: string;
+        description: string;
+        location: string;
+        imageURL: string;
+        startDate: Date;
+        endDate: Date;
+        category: string;
+        price: string;
+        isFree: boolean;
+        siteURL: string;
 }

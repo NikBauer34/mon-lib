@@ -1,5 +1,6 @@
 import { signin } from "@/features";
 import { $api } from "@/shared";
+import { getCookie, setCookie } from "cookies-next";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -32,10 +33,16 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials, req) {
         if (!credentials?.username || !credentials?.password) return null;
         const { username, password } = credentials;
+        console.log('here')
         const data = await signin(username, password)
         if (typeof data == 'string') {
           throw Error(`${data}`)
         }
+        // setCookie('accessToken', data.accessToken)
+        // setCookie('refreshToken', data.refreshToken)
+        // setCookie('expiresIn', data.expiresIn)
+        // console.log(getCookie('accessToken'))
+        
         return {
           username,
           accessToken: data.accessToken,
@@ -50,6 +57,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({token, user}) {
       if (user) return {...token, ...user}
 
+      const expiresIn = getCookie('expiresIn')
       if (new Date().getTime() < token.expiresIn) {
         return token
       }

@@ -1,13 +1,13 @@
 "use server"
 
 import { CreateEventParams, IEvent } from "@/entities";
+import { UpdateEvent } from "@/entities/Event/types";
 import { $api } from "@/shared";
 import { revalidatePath } from "next/cache";
 
-export async function updateEvent({ userId, event, path}: CreateEventParams) {
-  const data = {...event, organizer: userId, category: event.categoryId}
-  const res = await $api.post<IEvent>('/event/update', data)
-  revalidatePath(path)
+export async function updateEvent({ eventId, event, access}: {eventId: string, event: UpdateEvent, access: string}) {
+  const data = {...event}
+  const res = await $api.post<IEvent>(`/event/update/${eventId}`, data)
   return res.data
 
 }

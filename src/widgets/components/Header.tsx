@@ -18,15 +18,11 @@ const Header =  () => {
           <Image src={HeaderLogo} width={128} height={38} alt='monfer logo' />
         </Link>
 
-        {status == 'authenticated' && 
           <nav className='md:flex-between hidden w-full max-w-xs'>
             <NavItems />
           </nav>
-        }
         <div className='flex w-32 justify-end gap-3'>
-          {status == 'authenticated' &&
             <MobileNav />
-          }
           {status == 'loading' &&
             <Loader2 className='mr-2 h-14 w-14 animate-spin mb-auto'/>
           }

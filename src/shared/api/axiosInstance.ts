@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 import { getServerSession } from 'next-auth';
 import { getCookie, setCookie } from 'cookies-next'
@@ -10,11 +11,11 @@ const $api = axios.create({
     baseURL: process.env.API_URL
 })
 
-$api.interceptors.request.use(async (config) => {
-    const session = await getServerSession(authOptions)
-    config.headers.Authorization = `Bearer ${session?.user?.accessToken}`
-    return config;
-})
+// $api.interceptors.request.use(async (config) => {
+//     const session = await getServerSession(authOptions)
+//     config.headers.Authorization = `Bearer ${session?.user?.accessToken}`
+//     return config;
+// })
 
 // $api.interceptors.response.use((config) => {
 //     return config;

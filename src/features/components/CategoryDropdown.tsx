@@ -18,6 +18,7 @@ export default function CategoryDropdown({value, onChangeHandler}: DropdownProps
       categoryName: newCategory.trim()
     }).then((category): void => {
       setCategories((prevState) => [...prevState, category])
+      onChangeHandler(category.name)
     })
   }
   useEffect(() => {
@@ -31,13 +32,13 @@ export default function CategoryDropdown({value, onChangeHandler}: DropdownProps
     <Select disabled={true} />
   </>
   return (
-    <Select defaultValue={value ? value : categories[0].name}>
+    <Select defaultValue={value ? value : categories[0].name} onValueChange={(val) => onChangeHandler(val)}>
       <SelectTrigger className="select-field">
         <SelectValue placeholder='Category' />
       </SelectTrigger>
       <SelectContent>
         {categories.length > 0 && categories.map((category) => (
-          <SelectItem key={category._id} value={category._id} className="select-item p-regular-14" onClick={() => onChangeHandler(category.name)}>
+          <SelectItem key={category._id} value={category.name} className="select-item p-regular-14" >
             {category.name}
           </SelectItem>
         ))}

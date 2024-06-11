@@ -1,7 +1,7 @@
 import { JWT } from "next-auth/jwt"
 
 export interface IUser {
-  email: string
+  username: string
 }
 export interface LoginData {
   user: IUser,

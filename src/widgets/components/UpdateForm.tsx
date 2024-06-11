@@ -1,0 +1,174 @@
+"use client"
+const eventDefaultValues = {
+  title: '',
+  description: '',
+  location: '',
+  imageUrl: '',
+  startDateTime: new Date(),
+  endDateTime: new Date(),
+  categoryId: '',
+  price: '',
+  isFree: false,
+  url: '',
+}
+import LocationGrey from '@/shared/icons/location-grey.svg'
+import Calendar from '@/shared/icons/calendar.svg'
+import Dollar from '@/shared/icons/dollar.svg'
+import Link from '@/shared/icons/link.svg'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { $api, Button, useInputValidation } from "@/shared"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared"
+import { Input } from "@/shared"
+import { CreateEventParams, ICategory, eventFormSchema } from "@/entities"
+import * as z from 'zod'
+import { CategoryDropdown as Dropdown, getAllCategories } from "@/features"
+import { Textarea } from "@/shared"
+import { FileUploader } from "@/features"
+import { SyntheticEvent, useEffect, useMemo, useState } from "react"
+import Image from "next/image"
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
+import { Checkbox } from "@/shared"
+import { useRouter } from "next/navigation"
+import { createEvent, updateEvent } from "@/features"
+import { IEvent } from "@/entities"
+import { generateComponents } from "@uploadthing/react"
+import fileToBucket from "@/features/api/file_to_bucket.action"
+import { Loader2 } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import { JWT } from 'next-auth/jwt'
+import { getEvent } from '@/features/api/get-event.action'
+
+
+type EventFormProps = {
+  userId: string
+  type: "Create" | "Update"
+  event?: IEvent,
+  eventId?: string
+}
+
+const UpdateForm = ({eventId}: {eventId: string}) => {
+  let [title, setTitle] = useState('')
+  const [category, setCategory] = useState('')
+  const onChangeCategory = (title: string) => {
+    console.log(title)
+    setCategory(title)
+  }
+  const [imageURL, setImageURL] = useState('')
+  const [file, setFile] = useState<File | null>(null)
+  const onChangeFile = async (file: File) => {
+    const fileName = URL.createObjectURL(file)
+    setImageURL(fileName)
+  }
+  const [location, setLocation] = useState('')
+  const [description, setDescription] = useState('')
+  const [startDate, setStartDate] = useState(new Date())
+  const [endDate, setEndDate] = useState(new Date())
+  const [price, setPrice] = useState('')
+  const [isFree, setIsFree] = useState(false)
+  const [siteURL, setSiteURL] = useState('')
+  const [loading, setLoading] = useState(false)
+  const {data, status} = useSession()
+  let [token, setToken] = useState<JWT | undefined>(undefined)
+  const getInitEvent = async () => {
+    const {event, category} = await getEvent({eventId, access: data?.user?.refreshToken as unknown as string || ''})
+    setTitle(event.title)
+    setCategory(category)
+    setImageURL(event.imageURL)
+    setLocation(event.location)
+    setDescription(event.description)
+    setStartDate(event.startDate)
+    setEndDate(event.endDate)
+    setPrice(event.price)
+    setIsFree(event.isFree)
+    setSiteURL(event.siteURL)
+  }
+  const setup = useMemo(() => {
+    if (status == 'authenticated') {
+      setLoading(true)
+      console.log(data?.user?.refreshToken)
+      getInitEvent()
+      setLoading(false)
+      return 1
+    } else return 2
+  }, [status])
+  const NewUpdateEvent = async (info: any, refreshToken: any) => {
+    const res = await updateEvent({eventId, event: info, access: refreshToken})
+  }
+  const onSubmit = async (e: SyntheticEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const info: CreateEventParams = {event: {title, description, category, imageURL, location, startDate, endDate, price, isFree, siteURL}}
+    const {event} = info
+    console.log(data?.user?.refreshToken)
+    NewUpdateEvent(info, data?.user?.refreshToken)
+    } catch (e: any) {
+      console.log(e)
+    }
+
+    setLoading(false)
+  }
+  return (
+    <>  
+    <h1>{JSON.stringify(data)}</h1>
+      <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 md:flex-row">
+                <Input placeholder="Event title" className="input-field" value={title} onChange={e => setTitle(e.target.value)}/>
+                <Dropdown value={category} onChangeHandler={onChangeCategory} />
+                
+        </div>
+        <div className="flex flex-col gap-5 md:flex-row">
+                  <Textarea placeholder="Description" className="h-72 textarea rounded-2xl"value={description} onChange={e => setDescription(e.target.value)} ></Textarea>
+                  <FileUploader imageURL={imageURL} setFile={setFile} onFieldChange={onChangeFile} />
+                </div>
+        <div className="flex flex-col gap-5 md:flex-row">
+          <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
+            <Image src={LocationGrey} alt='calendar' width={24} height={24} />
+            </div>
+            <Input placeholder='Event Location or Online' className='input-field' value={location} onChange={e => setLocation(e.target.value)}/>
+        </div>
+        <div className="flex flex-col gap-5 md:flex-row">
+          <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
+            <Image src={Calendar} alt='calendar' width={24} height={24} className='filter-grey' />
+            <p className="ml-3 whitespace-nowrap text-grey-600">Start Date:</p>
+            <DatePicker selected={startDate} onChange={(date: Date) => setStartDate(date)} showTimeSelect timeInputLabel='Time:' dateFormat="MM/dd/yyyy h:mm aa" wrapperClassName='datePicker' />
+
+          </div>
+          <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
+          <Image src={Calendar} alt='calendar' width={24} height={24} className='filter-grey' />
+            <p className="ml-3 whitespace-nowrap text-grey-600">End Date:</p>
+            <DatePicker selected={endDate} onChange={(date: Date) => setEndDate(date)} showTimeSelect timeInputLabel='Time:' dateFormat="MM/dd/yyyy h:mm aa" wrapperClassName='datePicker' />
+          </div>
+        </div>
+        <div className="flex flex-col gap-5 md:flex-row">
+          <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
+            <Image src={Dollar} alt='dollar' width={24} height={24} className='filter-grey' />
+            <Input type="number" placeholder="Price" className="p-regular-16 border-0 bg-grey-50 outline-offset-0 focus:border-0 focus-visible:ring-0 focus-visible:ring-offset-0" value={isFree ? '0' : price} onChange={e => (!isFree && setPrice(e.target.value))}/>
+            <div className="flex items-center">
+            <label htmlFor="isFree" className="whitespace-nowrap pr-3 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Free Ticket</label>
+                                <Checkbox
+                                id="isFree" className="mr-2 h-5 w-5 border-2 border-primary-500" checked={isFree} onCheckedChange={() => setIsFree(!isFree)}/>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-5 md:flex-row">
+        <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
+          <Image src={Link} alt='link' width={24} height={24} />
+          <Input placeholder='URL' className='input-field' value={siteURL} onChange={e => setSiteURL(e.target.value)}></Input>
+        </div>
+        </div>
+      </div>
+      <Button size='lg' className='button col-span-2 w-full mt-4' disabled={loading} onClick={onSubmit}>
+        {loading && 
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        }
+        Update Event
+      </Button>
+    </>
+  )
+}
+
+export default UpdateForm
