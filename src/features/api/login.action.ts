@@ -11,6 +11,7 @@ export default async function signin(username: string, password: string, role: s
     console.log('Why')
     return res.data as LoginData
   } catch (e: any) {
+    console.log(e?.response?.data?.message)
     return e?.response?.data?.message
   }
 }

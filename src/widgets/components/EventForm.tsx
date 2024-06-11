@@ -69,6 +69,22 @@ const EventForm = () => {
   const [isFree, setIsFree] = useState(false)
   const [siteURL, setSiteURL] = useState('')
   const [loading, setLoading] = useState(false)
+  let [days, setDays] = useState<{
+  monday: {startDate: Date, endDate: Date}[], 
+  tuesday: {startDate: Date, endDate: Date}[], 
+  wednesday: {startDate: Date, endDate: Date}[], 
+  thursday: {startDate: Date, endDate: Date}[], 
+  friday: {startDate: Date, endDate: Date}[], 
+  saturday: {startDate: Date, endDate: Date}[], 
+  sunday: {startDate: Date, endDate: Date}[]}>({
+    monday: [{startDate: new Date(), endDate: new Date()}],
+    wednesday: [{startDate: new Date(), endDate: new Date()}],
+    tuesday: [{startDate: new Date(), endDate: new Date()}],
+    thursday: [{startDate: new Date(), endDate: new Date()}],
+    friday: [{startDate: new Date(), endDate: new Date()}],
+    saturday: [{startDate: new Date(), endDate: new Date()}],
+    sunday: [{startDate: new Date(), endDate: new Date()}]
+})
   const {data, status} = useSession()
   let [token, setToken] = useState<JWT | undefined>(undefined)
   useEffect(() => {
@@ -93,12 +109,24 @@ const EventForm = () => {
 
     setLoading(false)
   }
+  const setMonday = () => {
+    let new_moday = days.monday
+    new_moday.push({endDate: new Date(), startDate: new Date()})
+    setDays({...days, monday: days.monday})
+  }
+  const onMonday = (startDate: Date, endDate: Date, index: number) => {
+    let monday = days.monday
+    monday[index] = {startDate, endDate}
+    setDays({...days, monday})
+
+  }
   return (
+    
     <>  
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-5 md:flex-row">
                 <Input placeholder="Название" className="input-field" value={title} onChange={e => setTitle(e.target.value)}/>
-                {/* <Dropdown value={category} onChangeHandler={onChangeCategory} /> */}
+                <Dropdown value={category} onChangeHandler={onChangeCategory} />
                 
         </div>
         <div className="flex flex-col gap-5 md:flex-row">
@@ -111,19 +139,29 @@ const EventForm = () => {
             </div>
             <Input placeholder='Место проведения' className='input-field' value={location} onChange={e => setLocation(e.target.value)}/>
         </div>
-        <div className="flex flex-col gap-5 md:flex-row">
+        <p className="input-field flex">
+          <p className='self-center'>Понедельник</p>
+        </p>
+        {days.monday.map((el, index) => (
+          <div className="flex flex-col gap-5 md:flex-row">
           <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
             <Image src={Calendar} alt='calendar' width={24} height={24} className='filter-grey' />
             <p className="ml-3 whitespace-nowrap text-grey-600">Начало:</p>
-            <DatePicker selected={startDate} onChange={(date: Date) => setStartDate(date)} showTimeSelect timeInputLabel='Time:' dateFormat="MM/dd/yyyy h:mm aa" wrapperClassName='datePicker' />
+            <DatePicker selected={el.startDate} onChange={(date: Date) => onMonday(date, days.monday[index].endDate, index)} showTimeSelect timeInputLabel='Time:' dateFormat="MM/dd/yyyy h:mm aa" wrapperClassName='datePicker' />
 
           </div>
           <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
           <Image src={Calendar} alt='calendar' width={24} height={24} className='filter-grey' />
             <p className="ml-3 whitespace-nowrap text-grey-600">Конец:</p>
-            <DatePicker selected={endDate} onChange={(date: Date) => setEndDate(date)} showTimeSelect timeInputLabel='Time:' dateFormat="MM/dd/yyyy h:mm aa" wrapperClassName='datePicker' />
+            <DatePicker selected={el.endDate} onChange={(date: Date) => onMonday(days.monday[index].startDate,date, index)} showTimeSelect timeInputLabel='Time:' dateFormat="MM/dd/yyyy h:mm aa" wrapperClassName='datePicker' />
           </div>
+          {/* <Button onClick={e => setMonday()}>Добавить ещё мероприятий на понедельник</Button> */}
         </div>
+
+        ))
+        }
+        <Button onClick={e => setMonday()}>Добавить ещё мероприятий на понедельник</Button>
+        <Button onClick={() => console.log(days)}>log</Button>
         <div className="flex flex-col gap-5 md:flex-row">
           <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
             <Image src={Dollar} alt='dollar' width={24} height={24} className='filter-grey' />

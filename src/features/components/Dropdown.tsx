@@ -9,7 +9,7 @@ interface DropdownProps {
   value: string
   onChangeHandler: (title: string) => void
 }
-export default function CategoryDropdown({value, onChangeHandler}: DropdownProps) {
+export default function CatDropdown({value, onChangeHandler}: DropdownProps) {
   const [categories, setCategories] = useState<ICategory[]>([])
   const [newCategory, setNewCategory] = useState('')
 
@@ -24,8 +24,6 @@ export default function CategoryDropdown({value, onChangeHandler}: DropdownProps
   useEffect(() => {
     const getCategories = async () => {
       const categoryList = await getAllCategories()
-      console.log('cat')
-      console.log(categoryList)
       categoryList && setCategories(categoryList)
     }
     getCategories()
