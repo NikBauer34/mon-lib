@@ -47,12 +47,6 @@ export default function LoginForm() {
                   <CardDescription className="text-sm text-muted-foreground">
                     Введите логин и пароль, чтобы войти в аккаунт
                   </CardDescription>
-                  <Tabs defaultValue="user" className="w-[400px]">
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="user">Пользователь</TabsTrigger>
-                      <TabsTrigger value="museum">Музей</TabsTrigger>
-                    </TabsList>
-                  </Tabs>
                 </CardHeader>
                 <CardContent className="flex flex-col py-2">
                   <UserAuthForm />

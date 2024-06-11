@@ -2,6 +2,7 @@
 
 import { DestructiveAlert, FormSkeleton } from "@/entities"
 import { Badge, Button, CardContent, CardFooter, Input, Label, PasswordInput, cn, useInputValidation } from "@/shared"
+import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs"
 import { Loader2 } from "lucide-react"
 import { signIn } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -15,6 +16,7 @@ export default function UserAuthForm() {
   let [initLoading, setInitLoading] = useState(true)
   let [loading, setLoading] = useState(false)
   let [serverError, setServerError] = useState('')
+  const [role, setRole] = useState('user')
   const router = useRouter()
   useEffect(() => {
     if (searchParams.has('session_over')) {
@@ -31,7 +33,7 @@ export default function UserAuthForm() {
     username = username.value
     password = password.value
     const res = await signIn('credentials', {
-      username, password, redirect: false
+      username, password, role, redirect: false
     })
     if (!res?.ok) {
       setServerError(res?.error || '')
@@ -52,11 +54,17 @@ export default function UserAuthForm() {
             {initLoading ?
               <FormSkeleton />
               : <>
+              <Tabs defaultValue={role} className="w-[400px] ml-[45px]" onValueChange={e => setRole(e)}>
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="user">Пользователь</TabsTrigger>
+                      <TabsTrigger value="museum">Музей</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
               <form onSubmit={onSubmit}>
               <div className="grid gap-5">
                 <div className="grid gap-3">
             <Label htmlFor="login">
-              Никнейм
+              Логин
             </Label>
             <Input
               id="login"

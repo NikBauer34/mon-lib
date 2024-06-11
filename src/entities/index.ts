@@ -1,7 +1,6 @@
 import { LoginData } from "./User/types";
 import DestructiveAlert from "./User/components/DestructiveAlert";
 import FormSkeleton from "./User/components/FormSkeleton";
-import { headerLinks } from "./User/constants/headerLinks";
 import { ICategory } from "./Category/types";
 import { eventFormSchema } from "./Event/types";
 import { CreateEventParams } from "./Event/types";
@@ -10,7 +9,6 @@ export {
   type LoginData,
   DestructiveAlert,
   FormSkeleton,
-  headerLinks,
   type ICategory,
   eventFormSchema,
   type CreateEventParams,

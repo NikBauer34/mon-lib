@@ -1,10 +1,12 @@
 import { JWT } from "next-auth/jwt"
 
 export interface IUser {
-  username: string
+  name: string
+  surname: string
+  patronymic?: string
 }
 export interface LoginData {
-  user: IUser,
+  role: 'museum' | 'user'
   accessToken: JWT,
   refreshToken: JWT
   expiresIn: number

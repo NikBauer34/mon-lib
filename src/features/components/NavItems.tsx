@@ -1,16 +1,15 @@
 'use client';
 
-import { headerLinks } from '@/entities'
+import { unathenticatedHeaderLinks, athenticatedHeaderLinks, museumHeaderLinks } from '@/entities/User/constants/headerLinks';
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import React from 'react'
+import React, { useState } from 'react'
 
-const NavItems = () => {
+const NavItems = ({headerLinks}: {headerLinks: any}) => {
   const pathname = usePathname();
-
   return (
     <ul className="md:flex-between flex w-full flex-col items-start gap-5 md:flex-row">
-      {headerLinks.map((link) => {
+      {headerLinks.map((link: any) => {
         const isActive = pathname === link.route;
         
         return (
