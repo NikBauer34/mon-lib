@@ -36,7 +36,7 @@ export default function CategoryDropdown({value, onChangeHandler}: DropdownProps
   return (
     <Select defaultValue={value ? value : categories[0].name} onValueChange={(val) => onChangeHandler(val)}>
       <SelectTrigger className="select-field">
-        <SelectValue placeholder='Category' />
+        <SelectValue placeholder='Категория' />
       </SelectTrigger>
       <SelectContent>
         {categories.length > 0 && categories.map((category) => (
@@ -46,12 +46,12 @@ export default function CategoryDropdown({value, onChangeHandler}: DropdownProps
         ))}
 
         <AlertDialog>
-          <AlertDialogTrigger className="p-medium-14 flex w-full rounded-sm py-3 pl-8 text-primary-500 hover:bg-primary-50 focus:text-primary-500">Add new Category</AlertDialogTrigger>
+          <AlertDialogTrigger className="p-medium-14 flex w-full rounded-sm py-3 pl-8 text-primary-500 hover:bg-primary-50 focus:text-primary-500">Добавить новую категорию</AlertDialogTrigger>
           <AlertDialogContent className="bg-white">
             <AlertDialogHeader>
-              <AlertDialogTitle>New Category</AlertDialogTitle>
+              <AlertDialogTitle>Новая категория</AlertDialogTitle>
               <AlertDialogDescription>
-                <Input type="text" placeholder="Category name" className="input-field mt-3" onChange={(e) => setNewCategory(e.target.value)} />
+                <Input type="text" placeholder="Название" className="input-field mt-3" onChange={(e) => setNewCategory(e.target.value)} />
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

@@ -14,16 +14,22 @@ export const eventFormSchema = z.object({
 })
 export type CreateEventParams = {
   event: {
-    title: string
-    description: string
-    location: string
-    imageURL: string
-    startDate: Date
-    endDate: Date
-    category: string
-    price: string
-    isFree: boolean
-    siteURL: string
+  title: string;
+        description: string;
+        location: string;
+        imageURL: string;
+        days: {
+          monday: {startDate: Date, endDate: Date}[], 
+          tuesday: {startDate: Date, endDate: Date}[], 
+          wednesday: {startDate: Date, endDate: Date}[], 
+          thursday: {startDate: Date, endDate: Date}[], 
+          friday: {startDate: Date, endDate: Date}[], 
+          saturday: {startDate: Date, endDate: Date}[], 
+          sunday: {startDate: Date, endDate: Date}[]}
+        category: string;
+        price: string;
+        isFree: boolean;
+        phone: string;
   }
 }
 export type IEvent = {
@@ -32,12 +38,19 @@ export type IEvent = {
         description: string;
         location: string;
         imageURL: string;
-        startDate: Date;
-        endDate: Date;
+        days: {
+          monday: {startDate: Date, endDate: Date}[], 
+          tuesday: {startDate: Date, endDate: Date}[], 
+          wednesday: {startDate: Date, endDate: Date}[], 
+          thursday: {startDate: Date, endDate: Date}[], 
+          friday: {startDate: Date, endDate: Date}[], 
+          saturday: {startDate: Date, endDate: Date}[], 
+          sunday: {startDate: Date, endDate: Date}[]}
         category: string;
         price: string;
         isFree: boolean;
-        siteURL: string;
+        phone: string;
+
 }
 export type UpdateEvent = {
   _id: string
@@ -45,10 +58,16 @@ export type UpdateEvent = {
         description: string;
         location: string;
         imageURL: string;
-        startDate: Date;
-        endDate: Date;
+        days: {
+          monday: {startDate: Date, endDate: Date}[], 
+          tuesday: {startDate: Date, endDate: Date}[], 
+          wednesday: {startDate: Date, endDate: Date}[], 
+          thursday: {startDate: Date, endDate: Date}[], 
+          friday: {startDate: Date, endDate: Date}[], 
+          saturday: {startDate: Date, endDate: Date}[], 
+          sunday: {startDate: Date, endDate: Date}[]}
         category: string;
         price: string;
         isFree: boolean;
-        siteURL: string;
+        phone: string;
 }

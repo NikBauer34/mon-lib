@@ -36,9 +36,10 @@ import { createEvent, updateEvent } from "@/features"
 import { IEvent } from "@/entities"
 import { generateComponents } from "@uploadthing/react"
 import fileToBucket from "@/features/api/file_to_bucket.action"
-import { Loader2 } from 'lucide-react'
+import { Album, Loader2 } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { JWT } from 'next-auth/jwt'
+import DatesPicker from './DatesPicker'
 
 
 type EventFormProps = {
@@ -59,6 +60,7 @@ const EventForm = () => {
   const [file, setFile] = useState<File | null>(null)
   const onChangeFile = async (file: File) => {
     const fileName = URL.createObjectURL(file)
+    console.log(fileName)
     setImageURL(fileName)
   }
   const [location, setLocation] = useState('')
@@ -67,8 +69,10 @@ const EventForm = () => {
   const [endDate, setEndDate] = useState(new Date())
   const [price, setPrice] = useState('')
   const [isFree, setIsFree] = useState(false)
-  const [siteURL, setSiteURL] = useState('')
+  const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
+  let [isAllTime, setisAllTime] = useState(false)
+  let [defaultTime, setDefaultTime] = useState<{startDate: Date, endDate: Date}[]>([{startDate: new Date(), endDate: new Date()}])
   let [days, setDays] = useState<{
   monday: {startDate: Date, endDate: Date}[], 
   tuesday: {startDate: Date, endDate: Date}[], 
@@ -87,6 +91,7 @@ const EventForm = () => {
 })
   const {data, status} = useSession()
   let [token, setToken] = useState<JWT | undefined>(undefined)
+  const router = useRouter()
   useEffect(() => {
     setToken(data?.user?.refreshToken)
     console.log(token)
@@ -94,12 +99,13 @@ const EventForm = () => {
   const NewcreateEvent = async (info: any, refreshToken: any) => {
     const res = await createEvent(info, refreshToken as unknown as string || '')
     console.log(res._id)
+    router.push(`/event/${res._id}`)
   }
   const onSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
     setLoading(true)
     try {
-      const info: CreateEventParams = {event: {title, description, category, imageURL, location, startDate, endDate, price, isFree, siteURL}}
+      const info: CreateEventParams = {event: {title, description, category, imageURL, location, price, isFree, phone, days}}
     const {event} = info
     console.log(data?.user?.refreshToken)
     NewcreateEvent(info, data?.user?.refreshToken)
@@ -109,20 +115,27 @@ const EventForm = () => {
 
     setLoading(false)
   }
-  const setMonday = () => {
-    let new_moday = days.monday
-    new_moday.push({endDate: new Date(), startDate: new Date()})
-    setDays({...days, monday: days.monday})
+  const onDefault = (startDate: Date, endDate: Date, index: number) => {
+        let def = defaultTime
+        def[index] = {startDate, endDate}
+        setDefaultTime(def)
+        setDays({monday: defaultTime, tuesday: defaultTime, wednesday: defaultTime, thursday: defaultTime, friday: defaultTime, saturday: defaultTime, sunday: defaultTime})
   }
-  const onMonday = (startDate: Date, endDate: Date, index: number) => {
-    let monday = days.monday
-    monday[index] = {startDate, endDate}
-    setDays({...days, monday})
+  const setDefault = () => {
+        let def = defaultTime
+        def.push({endDate: new Date(), startDate: new Date()})
+        setDefaultTime(def)
+        setDays({monday: defaultTime, tuesday: defaultTime, wednesday: defaultTime, thursday: defaultTime, friday: defaultTime, saturday: defaultTime, sunday: defaultTime})
+  }
+  const sit = () => {
+    setDays({monday: defaultTime, tuesday: defaultTime, wednesday: defaultTime, thursday: defaultTime, friday: defaultTime, saturday: defaultTime, sunday: defaultTime})
+    return true
+  }
 
-  }
   return (
     
     <>  
+    <>{JSON.stringify(data)}</>
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-5 md:flex-row">
                 <Input placeholder="Название" className="input-field" value={title} onChange={e => setTitle(e.target.value)}/>
@@ -139,29 +152,35 @@ const EventForm = () => {
             </div>
             <Input placeholder='Место проведения' className='input-field' value={location} onChange={e => setLocation(e.target.value)}/>
         </div>
-        <p className="input-field flex">
-          <p className='self-center'>Понедельник</p>
-        </p>
-        {days.monday.map((el, index) => (
-          <div className="flex flex-col gap-5 md:flex-row">
+        <div className="flex flex-col gap-5 md:flex-row">
+          <div className="flex justify-between items-center  h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2 flex-col md:flex-row">
+            <Album width={24} height={24} className='filter-grey' />
+            <p  className="p-regular-16 border-0 bg-grey-50 outline-offset-0 focus:border-0 focus-visible:ring-0 focus-visible:ring-offset-0">Время событий по дням недели</p>
+            <div className="flex items-center">
+            <label htmlFor="isFree" className="whitespace-nowrap pr-3 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Поставить одинаковое время для всех дней недели</label>
+                                <Checkbox
+                                id="isFree" className="mr-2 h-5 w-5 border-2 border-primary-500" checked={isAllTime} onCheckedChange={() => setisAllTime(!isAllTime)}/>
+            </div>
+          </div>
+        </div>
+        {!isAllTime && <DatesPicker days={days} setDays={setDays} />}
+        {isAllTime && defaultTime.map((el, index) => 
+          <div className="flex flex-col gap-5 md:flex-row"> 
           <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
             <Image src={Calendar} alt='calendar' width={24} height={24} className='filter-grey' />
             <p className="ml-3 whitespace-nowrap text-grey-600">Начало:</p>
-            <DatePicker selected={el.startDate} onChange={(date: Date) => onMonday(date, days.monday[index].endDate, index)} showTimeSelect timeInputLabel='Time:' dateFormat="MM/dd/yyyy h:mm aa" wrapperClassName='datePicker' />
+            <DatePicker selected={el.startDate} onChange={(date: Date) => onDefault(date, defaultTime[index].endDate, index)} showTimeSelect timeInputLabel='Time:' dateFormat="dd/MM/yyyy h:mm aa" wrapperClassName='datePicker' />
 
           </div>
           <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
           <Image src={Calendar} alt='calendar' width={24} height={24} className='filter-grey' />
             <p className="ml-3 whitespace-nowrap text-grey-600">Конец:</p>
-            <DatePicker selected={el.endDate} onChange={(date: Date) => onMonday(days.monday[index].startDate,date, index)} showTimeSelect timeInputLabel='Time:' dateFormat="MM/dd/yyyy h:mm aa" wrapperClassName='datePicker' />
+            <DatePicker selected={el.endDate} onChange={(date: Date) => onDefault(defaultTime[index].startDate,date, index)} showTimeSelect timeInputLabel='Time:' dateFormat="dd/MM/yyyy h:mm aa" wrapperClassName='datePicker' />
           </div>
-          {/* <Button onClick={e => setMonday()}>Добавить ещё мероприятий на понедельник</Button> */}
         </div>
-
-        ))
+        )
         }
-        <Button onClick={e => setMonday()}>Добавить ещё мероприятий на понедельник</Button>
-        <Button onClick={() => console.log(days)}>log</Button>
+        {isAllTime && <Button onClick={e => setDefault()}>Добавить ещё время на каждый день</Button>}
         <div className="flex flex-col gap-5 md:flex-row">
           <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
             <Image src={Dollar} alt='dollar' width={24} height={24} className='filter-grey' />
@@ -173,10 +192,11 @@ const EventForm = () => {
             </div>
           </div>
         </div>
+        
         <div className="flex flex-col gap-5 md:flex-row">
         <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
           <Image src={Link} alt='link' width={24} height={24} />
-          <Input placeholder='Телефон' className='input-field' value={siteURL} onChange={e => setSiteURL(e.target.value)}></Input>
+          <Input placeholder='Телефон' className='input-field' value={phone} onChange={e => setPhone(e.target.value)}></Input>
         </div>
         </div>
       </div>

@@ -20,7 +20,7 @@ const Header =  () => {
   return (
     <header className='w-full border-b h-[85px]'>
       <div className='wrapper flex items-center justify-between'>
-        <Link href='/' className='w-36'>
+        <Link href='/' className='w-36 mr-6'>
           <Image src={HeaderLogo} width={128} height={38} alt='monfer logo' />
         </Link>
         {status == 'loading' &&
@@ -49,7 +49,7 @@ const Header =  () => {
         </Button> </>
         }
         {status=='unauthenticated' &&
-          <><nav className='md:flex-between hidden w-full max-w-xs'>
+          <><nav className='md:flex-between hidden w-full max-w-xs ml-9'>
           <NavItems headerLinks={unathenticatedHeaderLinks}/>
         </nav>
       <div className='flex w-32 justify-end gap-3'>

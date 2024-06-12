@@ -28,7 +28,7 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
     <section className="flex justify-center bg-primary-50 bg-dotted-pattern bg-contain">
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:max-w-7xl">
         <Image 
-          src={Museum}
+          src={event.imageURL}
           alt="hero image"
           width={1000}
           height={1000}
@@ -42,14 +42,14 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <div className="flex gap-3">
                 <p className="p-bold-20 rounded-full bg-green-500/10 px-5 py-2 text-green-700">
-                  {event.isFree ? 'Бесплатно по подписке' : `$${event.price}`}
+                  {event.isFree ? 'Бесплатно' : `$${event.price}`}
                 </p>
                 <p className="p-medium-16 rounded-full bg-grey-500/10 px-4 py-2.5 text-grey-500">
-                  {'Такой-то музей'}
+                  {category}
                 </p>
               </div>
 
-              {/* <By eventId={event._id} /> */}
+              <By eventId={event._id} />
             </div>
           </div>
 
@@ -59,14 +59,30 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
             <div className='flex gap-2 md:gap-3'>
               <Image src={Calendar} alt="calendar" width={32} height={32} />
               <div className="p-medium-16 lg:p-regular-20 flex flex-wrap items-center">
+              {event.days.monday.map((el) =>
+                
                 <p>
-                  {formatDateTime(event.startDate).dateOnly} - {' '}
-                  {formatDateTime(event.startDate).timeOnly}
+                  {formatDateTime(el.startDate).dateOnly} - {' '}
+                  {formatDateTime(el.endDate).timeOnly}
                 </p>
+                
+              )}
+              {event.days.tuesday.map((el) =>
                 <p>
-                  {formatDateTime(event.endDate).dateOnly} -  {' '}
-                  {formatDateTime(event.endDate).timeOnly}
+                  {formatDateTime(el.startDate).dateOnly} - {' '}
+                  {formatDateTime(el.endDate).timeOnly}
                 </p>
+                
+              
+              )}
+              {event.days.wednesday.map((el) =>
+                <p>
+                  {formatDateTime(el.startDate).dateOnly} - {' '}
+                  {formatDateTime(el.endDate).timeOnly}
+                </p>
+                
+              
+              )}
               </div>
             </div>
 
@@ -79,7 +95,6 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
           <div className="flex flex-col gap-2">
             <p className="p-bold-20 text-grey-600">Описание:</p>
             <p className="p-medium-16 lg:p-regular-18">{event.description}</p>
-            <p className="p-medium-16 lg:p-regular-18 truncate text-primary-500 underline">{event.siteURL}</p>
           </div>
           {/* <CreatorUpdate _id={id} /> */}
         </div>
