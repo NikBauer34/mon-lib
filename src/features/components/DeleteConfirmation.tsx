@@ -18,10 +18,13 @@ import {
 
 import { DeleteEvent } from '@/features/api/delete-event.action'
 
-export const DeleteConfirmation = ({ eventId }: { eventId: string }) => {
+export const DeleteConfirmation = ({ eventId, onDelete }: { eventId: string, onDelete: () => void }) => {
   // const pathname = usePathname()
   let [isPending, startTransition] = useTransition()
-
+  let Clicked = async () => {
+    await DeleteEvent({eventId})
+    onDelete()
+  }
   return (
     <AlertDialog>
       <AlertDialogTrigger>
@@ -30,19 +33,17 @@ export const DeleteConfirmation = ({ eventId }: { eventId: string }) => {
 
       <AlertDialogContent className="bg-white">
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure you want to delete?</AlertDialogTitle>
+          <AlertDialogTitle>Вы хотите удалить это событие?</AlertDialogTitle>
           <AlertDialogDescription className="p-regular-16 text-grey-600">
-            This will permanently delete this event
+            Это невозвратно удалит событие
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>Не надо</AlertDialogCancel>
 
           <AlertDialogAction
-            onClick={async () =>
-                await DeleteEvent({ eventId  })
-            }>
+            onClick={Clicked}>Удалить
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

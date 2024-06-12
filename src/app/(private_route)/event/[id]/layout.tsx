@@ -9,6 +9,7 @@ import Calendar from '@/shared/icons/calendar.svg'
 import By from '@/features/components/By';
 import CreatorUpdate from '@/features/components/CreatorUpdate';
 import Museum from '@/shared/images/portrait-ancient-roman-palace.jpg'
+import { Phone, PhoneCall } from 'lucide-react';
 export type SearchParamProps = {
   params: { id: string }
   searchParams: { [key: string]: string | string[] | undefined }
@@ -26,7 +27,7 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
   return (
     <>
     <section className="flex justify-center bg-primary-50 bg-dotted-pattern bg-contain">
-      <div className="grid grid-cols-1 md:grid-cols-2 2xl:max-w-7xl">
+      <div className="grid grid-cols-1 lg:grid-cols-2 2xl:max-w-7xl">
         <Image 
           src={event.imageURL}
           alt="hero image"
@@ -62,14 +63,14 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
               {event.days.monday.map((el) =>
                 
                 <p>
-                  {formatDateTime(el.startDate).dateOnly} - {' '}
+                  {formatDateTime(el.startDate).dateTime} - {' '} {' до '}
                   {formatDateTime(el.endDate).timeOnly}
                 </p>
                 
               )}
               {event.days.tuesday.map((el) =>
                 <p>
-                  {formatDateTime(el.startDate).dateOnly} - {' '}
+                  {formatDateTime(el.startDate).dateOnly} - {' '} {' до '}
                   {formatDateTime(el.endDate).timeOnly}
                 </p>
                 
@@ -77,7 +78,39 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
               )}
               {event.days.wednesday.map((el) =>
                 <p>
-                  {formatDateTime(el.startDate).dateOnly} - {' '}
+                  {formatDateTime(el.startDate).dateOnly} - {' '} {' до '}
+                  {formatDateTime(el.endDate).timeOnly}
+                </p>
+                
+              
+              )}
+              {event.days.thursday.map((el) =>
+                <p>
+                  {formatDateTime(el.startDate).dateOnly} - {' '} {' до '}
+                  {formatDateTime(el.endDate).timeOnly}
+                </p>
+                
+              
+              )}
+              {event.days.friday.map((el) =>
+                <p>
+                  {formatDateTime(el.startDate).dateOnly} - {' '} {' до '}
+                  {formatDateTime(el.endDate).timeOnly}
+                </p>
+                
+              
+              )}
+              {event.days.saturday.map((el) =>
+                <p>
+                  {formatDateTime(el.startDate).dateOnly} - {' '} {' до '}
+                  {formatDateTime(el.endDate).timeOnly}
+                </p>
+                
+              
+              )}
+              {event.days.sunday.map((el) =>
+                <p>
+                  {formatDateTime(el.startDate).dateOnly} - {' '} {' до '}
                   {formatDateTime(el.endDate).timeOnly}
                 </p>
                 
@@ -89,6 +122,10 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
             <div className="p-regular-20 flex items-center gap-3">
               <Image src={Location} alt="location" width={32} height={32} />
               <p className="p-medium-16 lg:p-regular-20">{event.location}</p>
+            </div>
+            <div className="p-regular-20 flex items-center gap-3">
+              <PhoneCall width={25} height={25} />
+              <p className="p-medium-16 lg:p-regular-20">{event.phone}</p>
             </div>
           </div>
 
@@ -103,7 +140,7 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
 
     {/* EVENTS with the same category */}
     <section className="wrapper my-8 flex flex-col gap-8 md:gap-12">
-      <h2 className="h2-bold">Related Events</h2>
+      <h2 className="h2-bold">Также могут понравится</h2>
 
       <Collection 
           emptyTitle="No Events Found"

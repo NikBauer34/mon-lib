@@ -105,7 +105,7 @@ const EventForm = () => {
     e.preventDefault()
     setLoading(true)
     try {
-      const info: CreateEventParams = {event: {title, description, category, imageURL, location, price, isFree, phone, days}}
+      const info: CreateEventParams = {event: {title, description, category, imageURL, location, price: price ? price : '0', isFree, phone, days}}
     const {event} = info
     console.log(data?.user?.refreshToken)
     NewcreateEvent(info, data?.user?.refreshToken)

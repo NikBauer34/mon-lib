@@ -1,4 +1,4 @@
-"use client"
+
 import { IEvent } from '@/entities'
 import { formatDateTime } from '@/entities/Event/helpers'
 import Image from 'next/image'
@@ -14,34 +14,41 @@ import { IUser } from '@/entities/User/types'
 import getOrganizerData from '../api/get-organizer-data.cation'
 import { FullEvent } from '../api/get-related-events.action'
 import Museum from '@/shared/images/portrait-ancient-roman-palace.jpg'
+import { JWT } from 'next-auth/jwt'
+import { IMuseum } from '@/entities/Museum/types'
 type CardProps = {
   event: FullEvent,
   hasOrderLink?: boolean,
-  hidePrice?: boolean
+  hidePrice?: boolean,
+  index: number,
+  onDelete: (index: number) => void
 }
 
-const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
-  // let [isEventCreator, setEventCreator] = useState(false)
-  // let [organizerData, setOrganizerData] = useState<IUser>({} as IUser)
-  // const {data, status} = useSession()
-  // console.log('event')
-  // console.log(event._id)
-  // const getIsOrganized = async () => {
-  //   const res = await isOrganizer({_id: event._id, access: data?.user?.refreshToken})
-  //   setEventCreator(res.is_organizer)
-  // }
-  // const setup = useMemo(() => {
-  //   if (status == 'authenticated') {
-  //     getIsOrganized()
-  //   }
-  // }, [status])
-  // useEffect(() => {
-  //   const getData = async () => {
-  //     const res = await getOrganizerData({eventId: event._id})
-  //     setOrganizerData(res)
-  //   }
-  //   getData()
-  // }, [])
+const Card = ({ event, hasOrderLink, hidePrice, index, onDelete }: CardProps) => {
+  let [isEventCreator, setEventCreator] = useState(false)
+  let [organizerData, setOrganizerData] = useState<IMuseum>({} as IMuseum)
+  const {data, status} = useSession()
+  let onClickDelete = () => {
+    onDelete(index)
+  }
+  console.log('event')
+  console.log(event._id)
+  const getIsOrganized = async () => {
+    const res = await isOrganizer({_id: event._id, access: data?.user?.refreshToken})
+    setEventCreator(res.is_organizer)
+  }
+  const setup = useMemo(() => {
+    if (status == 'authenticated') {
+      getIsOrganized()
+    }
+  }, [status])
+  useEffect(() => {
+    const getData = async () => {
+      const res = await getOrganizerData({eventId: event._id})
+      setOrganizerData(res)
+    }
+    getData()
+  }, [])
   return (
     <div className="group relative flex min-h-[380px] w-full max-w-[400px] flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-lg md:min-h-[438px]">
       <Link 
@@ -51,13 +58,13 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
       />
       {/* IS EVENT CREATOR ... */}
 
-      { !hidePrice && (
+      {isEventCreator && !hidePrice && (
         <div className="absolute right-2 top-2 flex flex-col gap-4 rounded-xl bg-white p-3 shadow-sm transition-all">
           <Link href={`/event/update/${event._id}`}>
             <Image src={Edit} alt="edit" width={20} height={20} />
           </Link>
 
-          <DeleteConfirmation eventId={event._id} />
+          <DeleteConfirmation eventId={event._id} onDelete={onClickDelete}/>
         </div>
       )}
 
@@ -74,7 +81,7 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
         </div>}
 
         <p className="p-medium-16 p-medium-18 text-grey-500">
-          {formatDateTime(event.startDate).dateTime}
+          {formatDateTime(event.days.monday[0].startDate).dateTime}
         </p>
 
         <Link href={`/event/${event._id}`}>
@@ -83,7 +90,7 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
 
         <div className="flex-between w-full">
           <p className="p-medium-14 md:p-medium-16 text-grey-600">
-            {"Создано каким-то музеем"}
+            {organizerData.title}
           </p>
 
           {hasOrderLink && (
