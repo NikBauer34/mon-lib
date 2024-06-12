@@ -25,15 +25,15 @@ export function formUrlQuery({ params, key, value }: UrlQueryParams) {
 type PaginationProps = {
   page: number | string,
   totalPages: number,
-  urlParamName?: string,
+  changePage: (val: number) => void
 }
 
-const Pagination = ({ page, totalPages, urlParamName}: PaginationProps) => {
+const Pagination = ({ page, totalPages, changePage}: PaginationProps) => {
 
   const onClick = (btnType: string) => {
     const pageValue = btnType === 'next' 
-      ? Number(page) + 1
-      : Number(page) + 1
+      ? changePage(1)
+      : changePage(-1)
   }
 
   return (

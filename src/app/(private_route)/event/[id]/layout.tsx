@@ -15,7 +15,7 @@ export type SearchParamProps = {
   searchParams: { [key: string]: string | string[] | undefined }
 }
 const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) => {
-  const {event, category} = await getEvent({eventId: id, access: ''});
+  const {event, category} = await getEvent({eventId: id});
   
   // const relatedEvents = await getRelatedEventsByCategory({
   //   category: category,

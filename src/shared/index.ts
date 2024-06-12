@@ -14,6 +14,7 @@ import { cn } from "./lib/utils";
 import {PasswordInput} from './ui/password-input' 
 import { Separator } from "./ui/separator";
 import { Pagination} from './ui/pagination'
+import useDebounce from "./lib/hooks/useDebounce";
 import {Sheet,
   SheetContent,
   SheetDescription,
@@ -83,5 +84,6 @@ export {
   Textarea,
   Checkbox,
   Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage,
-  Pagination
+  Pagination,
+  useDebounce
 }

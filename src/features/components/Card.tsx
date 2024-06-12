@@ -1,4 +1,4 @@
-
+"use client"
 import { IEvent } from '@/entities'
 import { formatDateTime } from '@/entities/Event/helpers'
 import Image from 'next/image'
