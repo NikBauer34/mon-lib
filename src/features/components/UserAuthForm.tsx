@@ -8,9 +8,9 @@ import { signIn } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import React, { SyntheticEvent, useEffect, useState } from "react"
 
-export default function UserAuthForm() {
+export default function UserAuthForm({InitUsername}: {InitUsername: string}) {
   const searchParams = useSearchParams()
-  let username: any = useInputValidation('', {isEmpty: {value: true, message: 'Никнейм не может быть пустым'}, minLength: {value: 3, message: 'Никнейм не может быть меньше трех символов'}, maxLength: {value: 12, message: 'Никнейм не может быть больше 12 символов'}})
+  let username: any = useInputValidation(InitUsername, {isEmpty: {value: true, message: 'Никнейм не может быть пустым'}, minLength: {value: 3, message: 'Никнейм не может быть меньше трех символов'}, maxLength: {value: 12, message: 'Никнейм не может быть больше 12 символов'}})
   let password:any = useInputValidation('', {isEmpty: {value: true, message: 'Пароль не может быть пустым'}, minLength: {value: 3, message: 'Пароль не может быть меньше трех символов'}, maxLength: {value: 12, message: 'Пароль не может быть больше 12 символов'}})
   let [sessionOver, setSessionOver] = useState(false)
   let [initLoading, setInitLoading] = useState(true)

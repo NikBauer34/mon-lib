@@ -5,11 +5,20 @@ import Card from "./Card";
 import Pagination from "./Pagination";
 import { FullEvent } from "../api/get-related-events.action";
 import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function Collected({data, page, totalPages, changePage}: {data: FullEvent[], page: number, totalPages: number, changePage: (el: number) => void}) {
+export default function Collected({data, page, totalPages, changePage}: {data: FullEvent[], page: number, totalPages: number, changePage?: (el: number) => void}) {
   let [cardData, setCardData] = useState(data)
+  let searchParams = useSearchParams()
+  let pathname = usePathname()
+  let router = useRouter()
   let onDelete = (index: number) => {
     setCardData(data.filter((el, ind) => ind != index))
+  }
+  let change = (val: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', String(val))
+    router.push(`${pathname}?${params}`)
   }
   return (
     <>
@@ -27,7 +36,7 @@ export default function Collected({data, page, totalPages, changePage}: {data: F
         })}
       </ul>
     </div>
-    <Pagination page={page} totalPages={totalPages} changePage={changePage} />
+    <Pagination page={page} totalPages={totalPages} changePage={changePage ? changePage : change} />
     </>
     : <div className="flex-center wrapper min-h-[200px] w-full flex-col gap-3 rounded-[14px] bg-grey-50 py-28 text-center">
     <h3 className="p-bold-20 md:h5-bold">Блин, не повезло</h3>

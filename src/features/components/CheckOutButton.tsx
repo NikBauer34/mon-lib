@@ -4,19 +4,26 @@ import Link from 'next/link'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, Button, Checkbox, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared'
 import Checkout from './Checkout'
-import { useSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { IUser } from '@/entities/User/types'
 import getUserData from '../api/get-user-data.action'
 import getUserId from '../api/get-user-id.action'
 import { Loader2 } from 'lucide-react'
 import createOrder from '../api/create-order.action'
 import DatePicker from "react-datepicker";
-
+import { v4 } from "uuid";
 import "react-datepicker/dist/react-datepicker.css";
+import { toast } from '@/shared/ui/use-toast'
+import { ToastAction } from '@/shared/ui/toast'
+import isSubscribed from '../api/is-subscribe.action'
+import register from '../api/register.action'
+import { DestructiveAlert } from '@/entities'
+import { useRouter } from 'next/navigation'
 
-const CheckoutButton = ({ event }: { event: UpdateEvent }) => {
+const CheckoutButton = ({ event,  }: { event: UpdateEvent }) => {
   const {status, data} = useSession()
   console.log(event)
+  let router = useRouter()
   let [form, setForm] = useState<IUser>({username: '', name: '', surname: '', patronymic: '', email: '', phone: ''})
   let [account, setAccount] = useState<{username: string, password: string}>({username: '', password: ''})
   let [isChecked, setChecked] = useState(true)
@@ -27,6 +34,8 @@ const CheckoutButton = ({ event }: { event: UpdateEvent }) => {
   let [datePickerError, setDatePickerError] = useState('')
   let [meetDate, setMeetDate] = useState(new Date())
   let [dayWeek, setDayWeek] = useState('next')
+  let [Subscribed, setSubscribed] = useState<{date: Date} | null>(null)
+  let [serverError, setServerError] = useState('')
   // let onChangeDate = (date: Date) => {
 
   // }
@@ -42,17 +51,30 @@ const CheckoutButton = ({ event }: { event: UpdateEvent }) => {
             console.log(userData)
             let _id = await getUserId(data.user.refreshToken)
             setUserId(_id)
+            let Data = await isSubscribed({eventId: event._id, access: data.user.refreshToken})
+            console.log(Data)
+            setSubscribed(Data)
           }
         }
         setLoading(false)
       }
       getData()
+    } else if (status == 'unauthenticated') {
+      setLoading(false)
     }
   }, [status])
   const createAuthOrder = async () => {
     setLoading(true)
-    const order = await createOrder({buyer: userId, event: event._id})
+    const order = await createOrder({buyer: userId, event: event._id, meetDate})
     setSuccess(true)
+    toast({
+      title: 'hi',
+      description: "и",
+      action: (
+        <ToastAction altText='Go'>Go</ToastAction>
+      )
+    })
+    alert('Вы успешно зарегистрировались')
     setLoading(false)
   }
   const changeDate = (date: Date) => {
@@ -70,12 +92,54 @@ const CheckoutButton = ({ event }: { event: UpdateEvent }) => {
   }
     console.log(isExist)
     if (!isExist) setDatePickerError('На эту дату в это время невозможна запись')
+    if (isExist) setDatePickerError('')
     setMeetDate(date)
     console.log(['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'][new Date().getDay()])
   }
+  useEffect(() => {
+    changeDate(meetDate)
+  }, [])
   let set = (val: string) => {
     setDayWeek(val)
     console.log(dayWeek)
+  }
+  const checkedOrder = async (e: any) => {
+    e.preventDefault()
+    setLoading(true)
+    const user = await register({...form, username: account.username, password: account.password})
+    if (typeof user == 'string') {
+      // setServerError(user)
+      setLoading(false)
+      return
+    }
+    console.log(user)
+    let id = await getUserId(user.refreshToken)
+    console.log(id)
+    const order = await createOrder({event: event._id, buyer: id, meetDate})
+    setSuccess(true)
+    setLoading(false)
+    router.push(`/sign-in?username=${account.username}`)
+  }
+  let NotCheckedOrder = async (e: any) => {
+    e.preventDefault()
+    setLoading(true)
+    const user = await register({...form, username: v4(), password: v4()})
+    if (typeof user == 'string') {
+      // setServerError(user)
+      setLoading(false)
+      return
+    }
+    console.log(user)
+    let id = await getUserId(user.refreshToken)
+    console.log(id)
+    const order = await createOrder({event: event._id, buyer: id, meetDate})
+    setSuccess(true)
+    setLoading(false)
+  }
+  const AuthOrder = async (e: any) => {
+    e.preventDefault()
+    if (isChecked) await checkedOrder(e)
+    if (!isChecked) await NotCheckedOrder(e)
   }
 
   return (
@@ -83,21 +147,26 @@ const CheckoutButton = ({ event }: { event: UpdateEvent }) => {
         <>
         {status == 'unauthenticated' &&
           <AlertDialog>
-          <AlertDialogTrigger className="p-medium-14 flex w-full rounded-sm py-3 pl-8 text-primary-500 hover:bg-primary-50 focus:text-primary-500"><Button asChild className="button rounded-full" size="lg">
-          <p>
-          Забронировать
-          </p>
-      </Button></AlertDialogTrigger>
-          <AlertDialogContent className="bg-white">
+          <AlertDialogTrigger className="p-medium-14 flex w-full rounded-sm py-3 pl-8 text-primary-500 hover:bg-primary-50 focus:text-primary-500">
+            <Button asChild className="button rounded-full" size="lg">
+            <p>
+            Забронировать
+            </p>
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent className="bg-white">
             <AlertDialogHeader>
               <AlertDialogTitle>Ваши данные:</AlertDialogTitle>
               <AlertDialogDescription>
-                <Input type="text" placeholder="Имя" className="input-field mt-3" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})}/>
+              <Input type="text" placeholder="Имя" className="input-field mt-3" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})}/>
                 <Input type="text" placeholder="Фамилия" className="input-field mt-3" value={form.surname} onChange={(e) => setForm({...form, surname: e.target.value})}/>
                 <Input type="text" placeholder="Отчество" className="input-field mt-3" value={form.patronymic} onChange={(e) => setForm({...form, patronymic: e.target.value})}/>
                 <Input type="text" placeholder="Телефон" className="input-field mt-3" value={form.phone} onChange={(e) => setForm({...form, phone: e.target.value})}/>
                 <Input type="text" placeholder="Эл. почта" className="input-field mt-3" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})}/>
-                <p>Введите логин и пароль, чтобы смотреть все ваши заказы на сайти онлайн</p>
+                <p>Дата посещения:</p>
+                 <DatePicker selected={meetDate} onChange={(date) => date != null ? changeDate(date): false} wrapperClassName='datePicker' dateFormat='dd/MM HH:mm' showTimeSelect timeFormat='HH:mm' className='input-field mt-3 mr-2' />
+                  {datePickerError && <p>{datePickerError}</p>}
+                  <p>Введите логин и пароль, чтобы смотреть все ваши заказы на сайти онлайн</p>
                 <label htmlFor="isFree" className="whitespace-nowrap pr-3 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Заполнить данные</label>
                                 <Checkbox
                                 id="isFree" className="mr-2 h-5 w-5 border-2 border-primary-500" checked={isChecked} onCheckedChange={() => setChecked(!isChecked)}/>
@@ -107,17 +176,14 @@ const CheckoutButton = ({ event }: { event: UpdateEvent }) => {
                     <Input type="text" placeholder="Пароль" className="input-field mt-3" value={account.password} onChange={(e) => setAccount({...account, password: e.target.value})}/>
                   </>
                 }
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <Alert>{isSuccess && <p>Вы успешно зарегистрировались</p>}</Alert>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction disabled={isLoading} onClick={async () => await createAuthOrder()}>{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Запись</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+                {serverError && <DestructiveAlert title='О, ошибка сервера' description={serverError}/>}
+                {isSuccess && <Alert>Запись прошла успешно! Ожидайте уведомления</Alert>}
+                </AlertDialogDescription></AlertDialogHeader><AlertDialogFooter>
+                <AlertDialogCancel>Выйти</AlertDialogCancel>
+                <AlertDialogAction disabled={isLoading || Boolean(datePickerError) || Boolean(serverError)} onClick={async (e) => await AuthOrder(e)}>{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Запись</AlertDialogAction>
+                  </AlertDialogFooter></AlertDialogContent></AlertDialog>
       }
-        {data?.user?.role == 'user' && 
+        {data?.user?.role == 'user' && !isSubscribed &&
           <AlertDialog>
           <AlertDialogTrigger className="p-medium-14 flex w-full rounded-sm py-3 pl-8 text-primary-500 hover:bg-primary-50 focus:text-primary-500">
             <Button asChild className="button rounded-full" size="lg">
@@ -141,7 +207,7 @@ const CheckoutButton = ({ event }: { event: UpdateEvent }) => {
                 
                 </AlertDialogDescription></AlertDialogHeader><AlertDialogFooter>
                 <AlertDialogCancel>Выйти</AlertDialogCancel>
-                <AlertDialogAction disabled={isLoading || Boolean(datePickerError)} onClick={async () => await createOrder({event: event._id, buyer: userId, meetDate})}>{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Запись</AlertDialogAction>
+                <AlertDialogAction disabled={isLoading || Boolean(datePickerError)} onClick={async () => await createAuthOrder()}>{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Запись</AlertDialogAction>
                   </AlertDialogFooter></AlertDialogContent></AlertDialog>
         }
         
@@ -152,6 +218,19 @@ const CheckoutButton = ({ event }: { event: UpdateEvent }) => {
           </p>
       </Button>
         }
+        {Subscribed &&
+          <Button asChild className="button rounded-full" size="lg">
+          <p>
+          Вы уже зарегистрированы ({Subscribed.date.getDay()}/{Subscribed.date.getHours()}/{Subscribed.date.getMinutes()})
+          </p>
+      </Button>
+        }
+        {
+        isLoading && <Button disabled asChild className="button rounded-full" size="lg">
+          <p>
+          Подгружаем
+          </p>
+      </Button>}
         </>
     </div>
   )

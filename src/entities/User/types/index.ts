@@ -14,3 +14,12 @@ export interface LoginData {
   refreshToken: JWT
   expiresIn: number
 }
+export interface CreateUser {
+  username: string;
+  name: string
+  surname: string
+  patronymic: string
+  email: string
+  phone: string
+  password: string
+}

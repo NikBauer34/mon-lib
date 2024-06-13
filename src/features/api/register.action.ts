@@ -1,10 +1,10 @@
 "use server"
 
 import { LoginData } from "@/entities"
-import { IUser } from "@/entities/User/types"
+import { CreateUser, IUser } from "@/entities/User/types"
 import { $api } from "@/shared"
 
-export default async function register(data: IUser): Promise<LoginData | string> {
+export default async function register(data: CreateUser): Promise<LoginData | string> {
   try {
     const res = await $api.post(`/auth/registration`, data)
     return res.data as LoginData

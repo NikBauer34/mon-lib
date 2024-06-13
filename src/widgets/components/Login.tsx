@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 
-export default function LoginForm() {
+export default function LoginForm({username}: {username: string}) {
   return (
     <>
       <div className="w-full lg:grid  lg:grid-cols-2 min-h-screen ">
@@ -49,7 +49,7 @@ export default function LoginForm() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col py-2">
-                  <UserAuthForm />
+                  <UserAuthForm InitUsername={username}/>
                   <p className="px-8 text-center text-sm text-muted-foreground pt-4 pb-5">
                 Входите в приложение в первый раз?{" "}
                 

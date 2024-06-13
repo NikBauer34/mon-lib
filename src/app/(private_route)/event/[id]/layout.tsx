@@ -11,6 +11,8 @@ import CreatorUpdate from '@/features/components/CreatorUpdate';
 import Museum from '@/shared/images/portrait-ancient-roman-palace.jpg'
 import { Phone, PhoneCall } from 'lucide-react';
 import getUserId from '@/features/api/get-user-id.action';
+import getRelatedEvents from '@/features/api/get-related-events.action';
+import Collected from '@/features/components/Collected';
 export type SearchParamProps = {
   params: { id: string }
   searchParams: { [key: string]: string | string[] | undefined }
@@ -18,6 +20,14 @@ export type SearchParamProps = {
 const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) => {
   const {event, category} = await getEvent({eventId: id});
   console.log(event.days.monday[0])
+  let page = (searchParams?.page as string) || '1'
+  const data = await getRelatedEvents({
+    category: category,
+    eventId: event._id,
+    page,
+    limit: 3
+  })
+  let totalPages = data.totalPages
   // const relatedEvents = await getRelatedEventsByCategory({
   //   category: category,
   //   eventId: event._id,
@@ -128,14 +138,7 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
     <section className="wrapper my-8 flex flex-col gap-8 md:gap-12">
       <h2 className="h2-bold">Также могут понравится</h2>
 
-      <Collection 
-          emptyTitle="No Events Found"
-          emptyStateSubtext="Come back later"
-          collectionType="All_Events"
-          limit={3}
-          category={category}
-          eventId={id}
-        />
+      <Collected data={data.events} page={Number(page)} totalPages={totalPages}/>
     </section>
     </>
   )
