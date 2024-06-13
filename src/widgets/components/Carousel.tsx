@@ -8,6 +8,10 @@ import { useEffect, useState } from "react"
 import { IMuseum } from "@/entities/Museum/types"
 import HeroLogo from '@/shared/images/hero.png'
 export default function DataCarousel({data}: {data: IMuseum[]}) {
+  let [isLoading, setLoading] = useState(true)
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1500)
+  }, [])
   return (
     <Carousel plugins={[
       Autoplay({
@@ -37,13 +41,13 @@ export default function DataCarousel({data}: {data: IMuseum[]}) {
 
           </div>
 
-          <Image 
+          {!isLoading && <Image 
             src={el.primaryImage}
             alt="hero"
             width={1000}
             height={1000}
             className="max-h-[70vh] object-contain object-center 2xl:max-h-[50vh]"
-          />
+          />}
         </div>
         </CarouselItem>
         )}

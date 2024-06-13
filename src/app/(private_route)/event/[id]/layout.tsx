@@ -64,41 +64,41 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
                 <p>Понедельник:</p>
                 {event.days.monday.map((el) =>
             
-                    <p>{el.startDate} - {' '} {el.endDate} ({el.totalSpace - el.peopleCount} мест)</p>
+                <p>{el.startDate} - {' '} {el.endDate}</p>
                   
                 )}
                 <p>Вторник:</p>
               {event.days.tuesday.map((el) =>
-                <p>{el.startDate} - {' '} {el.endDate} ({el.totalSpace - el.peopleCount} мест)</p>
+                <p>{el.startDate} - {' '} {el.endDate}</p>
               
               )}
               <p>Среда:</p>
               {event.days.wednesday.map((el) =>
-                <p>{el.startDate} - {' '} {el.endDate} ({el.totalSpace - el.peopleCount} мест)</p>
+                <p>{el.startDate} - {' '} {el.endDate}</p>
                 
               
               )}
               <p>Четверг</p>
               {event.days.thursday.map((el) =>
-              <p>{el.startDate} - {' '} {el.endDate} ({el.totalSpace - el.peopleCount} мест)</p>
+              <p>{el.startDate} - {' '} {el.endDate}</p>
                 
               
               )}
               <p>Пятница</p>
               {event.days.friday.map((el) =>
-                <p>{el.startDate} - {' '} {el.endDate} ({el.totalSpace - el.peopleCount} мест)</p>
+                <p>{el.startDate} - {' '} {el.endDate}</p>
                 
               
               )}
               <p>Суббота</p>
               {event.days.saturday.map((el) =>
-                <p>{el.startDate} - {' '} {el.endDate} ({el.totalSpace - el.peopleCount} мест)</p>
+                <p>{el.startDate} - {' '} {el.endDate}</p>
                 
               
               )}
               <p>Воскресенье</p>
               {event.days.sunday.map((el) =>
-                <p>{el.startDate} - {' '} {el.endDate} ({el.totalSpace - el.peopleCount} мест)</p>
+                <p>{el.startDate} - {' '} {el.endDate}</p>
                 
               
               )}

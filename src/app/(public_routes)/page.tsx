@@ -31,8 +31,10 @@ let MuseumData = [{
   description: 'Узнаваемое здание с круглой башенкой, которое находится на проспекте Луначарского, было построено в 1928 году специально для музея.',
   primaryImage: 'https://storage.yandexcloud.net/unilib-storage/test/62bcbffd-2c53-46e3-b5db-8a2acc58f7bb.png'
 }]
-export default function Home({ searchParams }: SearchParamProps) {
-
+export default async function Home({ searchParams }: SearchParamProps) {
+  const museums = await getAllMuseums()
+  console.log(museums)
+  const events = await getLatest({museum: museums[0].title, limit: 6, page: '1', regex: ''})
   return (
     <>
       <section className="bg-primary-50 bg-dotted-pattern bg-contain py-5 place-content-center">
@@ -42,7 +44,7 @@ export default function Home({ searchParams }: SearchParamProps) {
       <section id="events" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
         <h2 className="h2-bold">Доверено <br/> десятками мероприятий</h2>
 
-        <HeroSearch />
+        <HeroSearch museums={museums} initEvents={events.events}/>
       </section>
       <section id="events" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
       <h2 className="h2-bold">Афиша</h2>

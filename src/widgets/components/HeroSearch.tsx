@@ -5,19 +5,18 @@ import getAllMuseums from "@/features/api/get-all-museums.action";
 import { useEffect, useState } from "react";
 import { IMuseum } from "@/entities/Museum/types";
 import { FullEvent } from "@/features/api/get-related-events.action";
-import { useDebounce } from "@/shared";
+import { Button, useDebounce } from "@/shared";
 import Search from "./Search";
 import CategoryFilter from "@/widgets/components/CategoryFilter";
 import Collected from "@/features/components/Collected";
-export default function HeroSearch() {
-  let [museums, setMuseums] = useState<IMuseum[]>([])
-  let [museum, setMuseum] = useState('Музей аптеки')
-  let [prevMuseum, setPrevMuseum] = useState('')
-  let [events, setEvents] = useState<FullEvent[]>([])
+import { IEvent } from "@/entities";
+import Link from 'next/link'
+export default function HeroSearch({museums, initEvents}: {museums: IMuseum[], initEvents: FullEvent[]}) {
+  let [museum, setMuseum] = useState(museums[0].title)
+  let [events, setEvents] = useState<FullEvent[]>(initEvents)
   let [regex, setRegex] = useState('')
   let [page, setPage] = useState('1')
   let [totalPages, setTotalPages] = useState(0)
-  let debouncedRegex = useDebounce(regex, 500)
   let onChangeRegex = (str: string) => {
     setRegex(str)
   }
@@ -31,33 +30,18 @@ export default function HeroSearch() {
     setPage(page+=el)
     getEvents()
   }
-  useEffect(() => {
-    const getData = async () => {
-      let muses = await getAllMuseums()
-      setMuseums(muses)
-      setMuseum(muses[1].title)
-      getEvents()
-    }
-    getData()
-  }, [])
   let onChangeMuseum = (val: string) => {
-    if (prevMuseum) {
-      setMuseum(prevMuseum)
-      setPrevMuseum(val)
-    } else {
-      setPrevMuseum(val)
-    }
-    getEvents()
+    setMuseum(val)
   }
-  useEffect(() => {
-    getEvents()
-  }, [debouncedRegex])
   return (
     <>
     <div className="flex w-full flex-col gap-5 md:flex-row ">
           <Search value={regex} onChange={(val: string) => onChangeRegex(val)}/>
-          <CategoryFilter data={museums} onChange={(val: string) => onChangeMuseum(val)} defaultValue="Музей аптеки"/>
+          <CategoryFilter data={museums} onChange={(val: string) => onChangeMuseum(val)} defaultValue={museums[0].title}/>
         </div>
+        <Button size="lg" asChild className="button w-full sm:w-fit" onClick={getEvents}>
+                <p>Найти</p>
+            </Button>
         <div className="mt-3">
         <Collected data={events} page={Number(page)} totalPages={totalPages} changePage={changePage}/>
         </div></>
