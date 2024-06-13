@@ -1,62 +1,37 @@
 "use client"
-import { UpdateEvent } from '@/entities/Event/types';
-import { Button } from '@/shared';
-// import { checkoutOrder } from '@/lib/actions/order.actions';
-import { useEffect, useMemo, useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { FullEvent } from '../api/get-related-events.action';
-import getUserId from '../api/get-user-id.action';
-import { useSession } from 'next-auth/react';
-import { checkoutOrder } from '../api/checkout-order.action';
-import createOrder from '../api/create-order.action';
-import { redirect } from 'next/navigation';
-loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-
-const Checkout = ({ event }: { event: UpdateEvent }) => {
-  const {data, status} = useSession()
-  let [userId, setUserId] = useState('')
-  const setup = useMemo(async () => {
-    if (status == 'authenticated') {
-      const id = await getUserId(data.user?.refreshToken)
-      setUserId(id)
-    }
-  }, [])
-  useEffect(() => {
-    // Check to see if this is a redirect back from Checkout
-    const getData = async () => {
-      const query = new URLSearchParams(window.location.search);
-      if (query.get('success')) {
-      console.log('Order placed! You will receive an email confirmation.');
-      console.log(data)
-      alert('Успешно')
-      redirect('/profile')
-    }
-
-    if (query.get('canceled')) {
-      console.log('Order canceled -- continue to shop around and checkout when you’re ready.');
-    }
-    }
-    getData()
-  }, []);
-
-  const onCheckout = async () => {
-    const order = {
-      eventTitle: event.title,
-      eventId: event._id,
-      price: event.price,
-      isFree: event.isFree,
-      buyerId: userId
-    }
-
-    await checkoutOrder(order);
-  }
+import Link from 'next/link'
+import React, { useState } from 'react'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, Button, Input } from '@/shared'
+import { useSession } from 'next-auth/react'
+import { IUser } from '@/entities/User/types'
+const Checkout = ({data}: {data: IUser | null}) => {
 
   return (
-    <form action={onCheckout} method="post">
-      <Button type="submit" role="link" size="lg" className="button sm:w-fit" disabled={!userId}>
-        {event.isFree ? 'Get Ticket' : 'Buy Ticket'}
-      </Button>
-    </form>
+    <div className="flex items-center gap-3">
+        <>
+        {!data?.user || data?.user?.role == 'user' &&
+          <AlertDialog>
+          <AlertDialogTrigger className="p-medium-14 flex w-full rounded-sm py-3 pl-8 text-primary-500 hover:bg-primary-50 focus:text-primary-500"><Button asChild className="button rounded-full" size="lg">
+          <p>
+          Забронировать
+          </p>
+      </Button></AlertDialogTrigger>
+          <AlertDialogContent className="bg-white">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Введите ваши данные</AlertDialogTitle>
+              <AlertDialogDescription>
+                <Input type="text" placeholder="Category name" className="input-field mt-3" onChange={(e) => setNewCategory(e.target.value)} />
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => startTransition(handleAddCategory)}>Add</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        }
+        </>
+    </div>
   )
 }
 

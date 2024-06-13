@@ -10,6 +10,7 @@ import By from '@/features/components/By';
 import CreatorUpdate from '@/features/components/CreatorUpdate';
 import Museum from '@/shared/images/portrait-ancient-roman-palace.jpg'
 import { Phone, PhoneCall } from 'lucide-react';
+import getUserId from '@/features/api/get-user-id.action';
 export type SearchParamProps = {
   params: { id: string }
   searchParams: { [key: string]: string | string[] | undefined }

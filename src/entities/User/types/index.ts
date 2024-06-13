@@ -1,9 +1,12 @@
 import { JWT } from "next-auth/jwt"
 
 export interface IUser {
+  username: string;
   name: string
   surname: string
-  patronymic?: string
+  patronymic: string
+  email: string
+  phone: string
 }
 export interface LoginData {
   role: 'museum' | 'user'

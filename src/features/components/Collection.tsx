@@ -70,7 +70,7 @@ const Collection = ({
           </ul>
 
           {totalPages > 1 && (
-            <Pagination urlParamName={urlParamName} page={gopage} totalPages={totalPages} />
+            <Pagination  page={gopage} totalPages={totalPages} changePage={changePage}/>
           )}
         </div>
       ): (<> {!loading ? <>
