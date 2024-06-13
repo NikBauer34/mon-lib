@@ -10,6 +10,7 @@ const Orders = async ({ searchParams, params }: SearchParamProps) => {
   const searchText = (searchParams?.text as string) || ''
 
   const orders = await getOrdersByEvent({ eventId, searchString: searchText })
+  console.log(orders)
 
   return (
     <>

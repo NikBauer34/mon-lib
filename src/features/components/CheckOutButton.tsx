@@ -213,9 +213,8 @@ const CheckoutButton = ({ event,  }: { event: UpdateEvent }) => {
         
         {data?.user?.role == 'museum' &&
           <Button asChild className="button rounded-full" size="lg">
-          <p>
-          Посмотреть заказы
-          </p>
+          <Link href={`/order/${event._id}`}>
+          Посмотреть заказы</Link>
       </Button>
         }
         {Subscribed &&

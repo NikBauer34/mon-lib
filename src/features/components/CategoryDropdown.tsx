@@ -39,6 +39,7 @@ export default function CategoryDropdown({value, onChangeHandler}: DropdownProps
         <SelectValue placeholder='Категория' />
       </SelectTrigger>
       <SelectContent>
+        <SelectItem disabled value="no">Выберите по душе</SelectItem>
         {categories.length > 0 && categories.map((category) => (
           <SelectItem key={category._id} value={category.name} className="select-item p-regular-14" >
             {category.name}
