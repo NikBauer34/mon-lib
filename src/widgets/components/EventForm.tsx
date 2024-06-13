@@ -11,6 +11,9 @@ const eventDefaultValues = {
   isFree: false,
   url: '',
 }
+
+import 'react-time-picker/dist/TimePicker.css';
+import 'react-clock/dist/Clock.css';
 import LocationGrey from '@/shared/icons/location-grey.svg'
 import Calendar from '@/shared/icons/calendar.svg'
 import Dollar from '@/shared/icons/dollar.svg'
@@ -28,7 +31,9 @@ import { FileUploader } from "@/features"
 import { SyntheticEvent, useEffect, useMemo, useState } from "react"
 import Image from "next/image"
 import DatePicker from "react-datepicker";
-
+import 'react-time-picker/dist/TimePicker.css';
+import 'react-clock/dist/Clock.css';
+import TimePicker from 'react-time-picker';
 import "react-datepicker/dist/react-datepicker.css";
 import { Checkbox } from "@/shared"
 import { redirect, useRouter } from "next/navigation"
@@ -72,22 +77,22 @@ const EventForm = () => {
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   let [isAllTime, setisAllTime] = useState(false)
-  let [defaultTime, setDefaultTime] = useState<{startDate: Date, endDate: Date}[]>([{startDate: new Date(), endDate: new Date()}])
+  let [defaultTime, setDefaultTime] = useState<{startDate: string, endDate: string, totalSpace: number, peopleCount: number}[]>([{startDate: '', endDate: '', totalSpace: 0, peopleCount: 0}])
   let [days, setDays] = useState<{
-  monday: {startDate: Date, endDate: Date}[], 
-  tuesday: {startDate: Date, endDate: Date}[], 
-  wednesday: {startDate: Date, endDate: Date}[], 
-  thursday: {startDate: Date, endDate: Date}[], 
-  friday: {startDate: Date, endDate: Date}[], 
-  saturday: {startDate: Date, endDate: Date}[], 
-  sunday: {startDate: Date, endDate: Date}[]}>({
-    monday: [{startDate: new Date(), endDate: new Date()}],
-    wednesday: [{startDate: new Date(), endDate: new Date()}],
-    tuesday: [{startDate: new Date(), endDate: new Date()}],
-    thursday: [{startDate: new Date(), endDate: new Date()}],
-    friday: [{startDate: new Date(), endDate: new Date()}],
-    saturday: [{startDate: new Date(), endDate: new Date()}],
-    sunday: [{startDate: new Date(), endDate: new Date()}]
+  monday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+  tuesday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+  wednesday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+  thursday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+  friday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+  saturday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+  sunday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[]}>({
+    monday: [{startDate: '', endDate: '', totalSpace: 0, peopleCount: 0}],
+    wednesday: [{startDate: '', endDate: '', totalSpace: 0, peopleCount: 0}],
+    tuesday: [{startDate: '', endDate: '', totalSpace: 0, peopleCount: 0}],
+    thursday: [{startDate: '', endDate: '', totalSpace: 0, peopleCount: 0}],
+    friday: [{startDate: '', endDate: '', totalSpace: 0, peopleCount: 0}],
+    saturday: [{startDate: '', endDate: '', totalSpace: 0, peopleCount: 0}],
+    sunday: [{startDate: '', endDate: '', totalSpace: 0, peopleCount: 0}]
 })
   const {data, status} = useSession()
   let [token, setToken] = useState<JWT | undefined>(undefined)
@@ -115,15 +120,15 @@ const EventForm = () => {
 
     setLoading(false)
   }
-  const onDefault = (startDate: Date, endDate: Date, index: number) => {
+  const onDefault = (startDate: string, endDate: string, totalSpace: number, index: number) => {
         let def = defaultTime
-        def[index] = {startDate, endDate}
+        def[index] = {...def[index], startDate, endDate, totalSpace}
         setDefaultTime(def)
         setDays({monday: defaultTime, tuesday: defaultTime, wednesday: defaultTime, thursday: defaultTime, friday: defaultTime, saturday: defaultTime, sunday: defaultTime})
   }
   const setDefault = () => {
         let def = defaultTime
-        def.push({endDate: new Date(), startDate: new Date()})
+        def.push({endDate: '', startDate: '', peopleCount: 0, totalSpace: 0})
         setDefaultTime(def)
         setDays({monday: defaultTime, tuesday: defaultTime, wednesday: defaultTime, thursday: defaultTime, friday: defaultTime, saturday: defaultTime, sunday: defaultTime})
   }
@@ -131,6 +136,7 @@ const EventForm = () => {
     setDays({monday: defaultTime, tuesday: defaultTime, wednesday: defaultTime, thursday: defaultTime, friday: defaultTime, saturday: defaultTime, sunday: defaultTime})
     return true
   }
+  let [val, setVal] = useState('10:00')
 
   return (
     
@@ -168,16 +174,21 @@ const EventForm = () => {
           <div className="flex flex-col gap-5 md:flex-row"> 
           <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
             <Image src={Calendar} alt='calendar' width={24} height={24} className='filter-grey' />
-            <p className="ml-3 whitespace-nowrap text-grey-600">Начало:</p>
-            <DatePicker selected={el.startDate} onChange={(date: Date) => onDefault(date, defaultTime[index].endDate, index)} showTimeSelect timeInputLabel='Time:' dateFormat="dd/MM/yyyy h:mm aa" wrapperClassName='datePicker' />
+            <p className="ml-3 whitespace-nowrap text-grey-600">Время начала ({index+1}):</p>
+            <Input type="text" placeholder="Время" className="p-regular-16 border-0 bg-grey-50 outline-offset-0 focus:border-0 focus-visible:ring-0 focus-visible:ring-offset-0" value={el.startDate} onChange={(e) => onDefault(e.target.value, defaultTime[index].endDate, defaultTime[index].totalSpace, index)}/>
 
           </div>
           <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
           <Image src={Calendar} alt='calendar' width={24} height={24} className='filter-grey' />
-            <p className="ml-3 whitespace-nowrap text-grey-600">Конец:</p>
-            <DatePicker selected={el.endDate} onChange={(date: Date) => onDefault(defaultTime[index].startDate,date, index)} showTimeSelect timeInputLabel='Time:' dateFormat="dd/MM/yyyy h:mm aa" wrapperClassName='datePicker' />
+            <p className="ml-3 whitespace-nowrap text-grey-600">Время конца: ({index+1})</p>
+            <Input type="text" placeholder="Время" className="p-regular-16 border-0 bg-grey-50 outline-offset-0 focus:border-0 focus-visible:ring-0 focus-visible:ring-offset-0" value={el.endDate} onChange={(e) => onDefault(defaultTime[index].startDate, e.target.value, defaultTime[index].totalSpace, index)}/>
           </div>
-        </div>
+          <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
+          <Image src={Calendar} alt='calendar' width={24} height={24} className='filter-grey' />
+            <p className="ml-3 whitespace-nowrap text-grey-600">Кол-во мест ({index+1}):</p>
+            <Input type="number" placeholder="Время" className="p-regular-16 border-0 bg-grey-50 outline-offset-0 focus:border-0 focus-visible:ring-0 focus-visible:ring-offset-0" value={el.totalSpace} onChange={(e) => onDefault(defaultTime[index].startDate, defaultTime[index].endDate, Number(e.target.value), index)}/>
+          </div>
+          </div>
         )
         }
         {isAllTime && <Button onClick={e => setDefault()}>Добавить ещё время на каждый день</Button>}

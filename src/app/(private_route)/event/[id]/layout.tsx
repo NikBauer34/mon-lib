@@ -17,7 +17,7 @@ export type SearchParamProps = {
 }
 const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) => {
   const {event, category} = await getEvent({eventId: id});
-  
+  console.log(event.days.monday[0])
   // const relatedEvents = await getRelatedEventsByCategory({
   //   category: category,
   //   eventId: event._id,
@@ -58,62 +58,47 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
           <CheckoutButton event={event} />
 
           <div className="flex flex-col gap-5">
-            <div className='flex gap-2 md:gap-3'>
+            <div className='flex gap-2 md:gap-3 '>
               <Image src={Calendar} alt="calendar" width={32} height={32} />
-              <div className="p-medium-16 lg:p-regular-20 flex flex-wrap items-center">
-              {event.days.monday.map((el) =>
-                
-                <p>
-                  {formatDateTime(el.startDate).dateTime} - {' '} {' до '}
-                  {formatDateTime(el.endDate).timeOnly}
-                </p>
-                
-              )}
+              <div className="p-medium-16 lg:p-regular-20 flex flex-wrap items-center flex-col justify-center">
+                <p>Понедельник:</p>
+                {event.days.monday.map((el) =>
+            
+                    <p>{el.startDate} - {' '} {el.endDate} ({el.totalSpace - el.peopleCount} мест)</p>
+                  
+                )}
+                <p>Вторник:</p>
               {event.days.tuesday.map((el) =>
-                <p>
-                  {formatDateTime(el.startDate).dateOnly} - {' '} {' до '}
-                  {formatDateTime(el.endDate).timeOnly}
-                </p>
-                
+                <p>{el.startDate} - {' '} {el.endDate} ({el.totalSpace - el.peopleCount} мест)</p>
               
               )}
+              <p>Среда:</p>
               {event.days.wednesday.map((el) =>
-                <p>
-                  {formatDateTime(el.startDate).dateOnly} - {' '} {' до '}
-                  {formatDateTime(el.endDate).timeOnly}
-                </p>
+                <p>{el.startDate} - {' '} {el.endDate} ({el.totalSpace - el.peopleCount} мест)</p>
                 
               
               )}
+              <p>Четверг</p>
               {event.days.thursday.map((el) =>
-                <p>
-                  {formatDateTime(el.startDate).dateOnly} - {' '} {' до '}
-                  {formatDateTime(el.endDate).timeOnly}
-                </p>
+              <p>{el.startDate} - {' '} {el.endDate} ({el.totalSpace - el.peopleCount} мест)</p>
                 
               
               )}
+              <p>Пятница</p>
               {event.days.friday.map((el) =>
-                <p>
-                  {formatDateTime(el.startDate).dateOnly} - {' '} {' до '}
-                  {formatDateTime(el.endDate).timeOnly}
-                </p>
+                <p>{el.startDate} - {' '} {el.endDate} ({el.totalSpace - el.peopleCount} мест)</p>
                 
               
               )}
+              <p>Суббота</p>
               {event.days.saturday.map((el) =>
-                <p>
-                  {formatDateTime(el.startDate).dateOnly} - {' '} {' до '}
-                  {formatDateTime(el.endDate).timeOnly}
-                </p>
+                <p>{el.startDate} - {' '} {el.endDate} ({el.totalSpace - el.peopleCount} мест)</p>
                 
               
               )}
+              <p>Воскресенье</p>
               {event.days.sunday.map((el) =>
-                <p>
-                  {formatDateTime(el.startDate).dateOnly} - {' '} {' до '}
-                  {formatDateTime(el.endDate).timeOnly}
-                </p>
+                <p>{el.startDate} - {' '} {el.endDate} ({el.totalSpace - el.peopleCount} мест)</p>
                 
               
               )}

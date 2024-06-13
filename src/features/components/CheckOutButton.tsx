@@ -2,12 +2,17 @@
 import { UpdateEvent } from '@/entities/Event/types'
 import Link from 'next/link'
 import React, { useEffect, useMemo, useState } from 'react'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, Button, Checkbox, Input } from '@/shared'
+import { Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, Button, Checkbox, Input } from '@/shared'
 import Checkout from './Checkout'
 import { useSession } from 'next-auth/react'
 import { IUser } from '@/entities/User/types'
 import getUserData from '../api/get-user-data.action'
 import getUserId from '../api/get-user-id.action'
+import { Loader2 } from 'lucide-react'
+import createOrder from '../api/create-order.action'
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 const CheckoutButton = ({ event }: { event: UpdateEvent }) => {
   const {status, data} = useSession()
@@ -15,6 +20,13 @@ const CheckoutButton = ({ event }: { event: UpdateEvent }) => {
   let [account, setAccount] = useState<{username: string, password: string}>({username: '', password: ''})
   let [isChecked, setChecked] = useState(true)
   let [userId, setUserId] = useState('')
+  let [isLoading, setLoading] = useState(true)
+  let [isSuccess, setSuccess] = useState(false)
+  let [startDate, setStartDate] = useState(event.days.monday[0].startDate)
+  let [datePickerError, setDatePickerError] = useState('')
+  // let onChangeDate = (date: Date) => {
+
+  // }
   let setup = useMemo(() => {
     if (status == 'authenticated') {
       const getData = async () => {
@@ -29,10 +41,17 @@ const CheckoutButton = ({ event }: { event: UpdateEvent }) => {
             setUserId(_id)
           }
         }
+        setLoading(false)
       }
       getData()
     }
   }, [status])
+  const createAuthOrder = async () => {
+    setLoading(true)
+    const order = await createOrder({buyer: userId, event: event._id})
+    setSuccess(true)
+    setLoading(false)
+  }
 
   return (
     <div className="flex items-center gap-3">
@@ -66,8 +85,9 @@ const CheckoutButton = ({ event }: { event: UpdateEvent }) => {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
+              <Alert>{isSuccess && <p>Вы успешно зарегистрировались</p>}</Alert>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction>Add</AlertDialogAction>
+              <AlertDialogAction disabled={isLoading} onClick={async () => await createAuthOrder()}>{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Запись</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
@@ -88,11 +108,14 @@ const CheckoutButton = ({ event }: { event: UpdateEvent }) => {
                 <Input type="text" placeholder="Отчество" className="input-field mt-3" value={form.patronymic} onChange={(e) => setForm({...form, patronymic: e.target.value})}/>
                 <Input type="text" placeholder="Телефон" className="input-field mt-3" value={form.phone} onChange={(e) => setForm({...form, phone: e.target.value})}/>
                 <Input type="text" placeholder="Эл. почта" className="input-field mt-3" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})}/>
+                <DatePicker onChange={(date:Date) => console.log(date)} showTimeSelect timeInputLabel='Time:'  wrapperClassName='datePicker' timeFormat='HH:mm'/>
+                <p>{datePickerError}</p>
+
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Обратно</AlertDialogCancel>
-              <AlertDialogAction>Add</AlertDialogAction>
+              <AlertDialogAction>Запись</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

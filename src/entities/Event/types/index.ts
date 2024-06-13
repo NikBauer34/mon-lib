@@ -19,13 +19,13 @@ export type CreateEventParams = {
         location: string;
         imageURL: string;
         days: {
-          monday: {startDate: Date, endDate: Date}[], 
-          tuesday: {startDate: Date, endDate: Date}[], 
-          wednesday: {startDate: Date, endDate: Date}[], 
-          thursday: {startDate: Date, endDate: Date}[], 
-          friday: {startDate: Date, endDate: Date}[], 
-          saturday: {startDate: Date, endDate: Date}[], 
-          sunday: {startDate: Date, endDate: Date}[]}
+          monday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          tuesday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          wednesday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          thursday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          friday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          saturday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          sunday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[]}
         category: string;
         price: string;
         isFree: boolean;
@@ -39,13 +39,13 @@ export type IEvent = {
         location: string;
         imageURL: string;
         days: {
-          monday: {startDate: Date, endDate: Date}[], 
-          tuesday: {startDate: Date, endDate: Date}[], 
-          wednesday: {startDate: Date, endDate: Date}[], 
-          thursday: {startDate: Date, endDate: Date}[], 
-          friday: {startDate: Date, endDate: Date}[], 
-          saturday: {startDate: Date, endDate: Date}[], 
-          sunday: {startDate: Date, endDate: Date}[]}
+          monday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          tuesday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          wednesday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          thursday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          friday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          saturday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          sunday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[]}
         category: string;
         price: string;
         isFree: boolean;
@@ -59,13 +59,13 @@ export type UpdateEvent = {
         location: string;
         imageURL: string;
         days: {
-          monday: {startDate: Date, endDate: Date}[], 
-          tuesday: {startDate: Date, endDate: Date}[], 
-          wednesday: {startDate: Date, endDate: Date}[], 
-          thursday: {startDate: Date, endDate: Date}[], 
-          friday: {startDate: Date, endDate: Date}[], 
-          saturday: {startDate: Date, endDate: Date}[], 
-          sunday: {startDate: Date, endDate: Date}[]}
+          monday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          tuesday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          wednesday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          thursday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          friday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          saturday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          sunday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[]}
         category: string;
         price: string;
         isFree: boolean;
