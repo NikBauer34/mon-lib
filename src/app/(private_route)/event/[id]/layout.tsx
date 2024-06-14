@@ -19,6 +19,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import isSubscribed from '@/features/api/is-subscribe.action';
 import { Button } from '@/shared';
 import Link from 'next/link';
+import isOrganizer from '@/features/api/is_organizer.action';
 export type SearchParamProps = {
   params: { id: string }
   searchParams: { [key: string]: string | string[] | undefined }
@@ -48,6 +49,7 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
   let subscribed = await isSubscribed({access: token, eventId: id})
   console.log('subs')
   console.log(subscribed)
+  let isEventCreator = await isOrganizer({_id: id, access: token})
   // const relatedEvents = await getRelatedEventsByCategory({
   //   category: category,
   //   eventId: event._id,
@@ -149,7 +151,7 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
             <p className="p-bold-20 text-grey-600">Описание:</p>
             <p className="p-medium-16 lg:p-regular-18">{event.description}</p>
           </div>
-          {/* <CreatorUpdate _id={id} /> */}
+          <CreatorUpdate id={id} isEventCreator={isEventCreator.is_organizer}/>
         </div>
       </div>
     </section>
