@@ -9,33 +9,34 @@ import { Button } from "@/shared";
 import Link from "next/link";
 import Collected from "@/features/components/Collected";
 import { string } from "zod";
+import ParamSearch from "@/features/components/ParamSearch";
 
 export default async function Profile({ searchParams }: SearchParamProps) {
-  const session = await getServerSession(authOptions)
-  const token = session?.user?.refreshToken
+  // const session = await getServerSession(authOptions)
+  // const token = session?.user?.refreshToken
 
-  const ordersPage = Number(searchParams?.ordersPage) || 1;
-  const eventsPage = Number(searchParams?.eventsPage) || 1;
-  const userId = await getUserId(token) as string
-  const orders = await getOrdersByUser({userId, page: ordersPage, limit: 6})
-  const orderedEvents = orders?.events?.map((order: FullOrder) => order.event) || [];
-  console.log(orderedEvents)
-  const events = await getEventsByUser({userId, page: eventsPage, limit: 6})
+  // const ordersPage = Number(searchParams?.ordersPage) || 1;
+  // const eventsPage = Number(searchParams?.eventsPage) || 1;
+  // const userId = await getUserId(token) as string
+  // const orders = await getOrdersByUser({userId, page: ordersPage, limit: 6})
+  // const orderedEvents = orders?.events?.map((order: FullOrder) => order.event) || [];
+  // console.log(orderedEvents)
+  // const events = await getEventsByUser({userId, page: eventsPage, limit: 6})
+  const searchText = (searchParams?.text as string) || ''
   return (
     <>
       {/* My Tickets */}
       <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
         <div className="wrapper flex items-center justify-center sm:justify-between">
           <h3 className='h3-bold text-center sm:text-left'>Мои мероприятия</h3>
-          <Button asChild size="lg" className="button hidden sm:flex">
-            <Link href="/#events">
-              Еще больше мероприятий
-            </Link>
-          </Button>
+          
         </div>
       </section>
+      <section className="wrapper mt-8">
+        <ParamSearch />
+      </section>
 
-      <section className="wrapper my-8">
+      {/* <section className="wrapper my-8">
         <Collected
           data={events.events}
           page={eventsPage}
@@ -44,7 +45,7 @@ export default async function Profile({ searchParams }: SearchParamProps) {
       </section>
 
       {/* Events Organized */}
-      <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
+      {/* <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
         <div className="wrapper flex items-center justify-center sm:justify-between">
           <h3 className='h3-bold text-center sm:text-left'>Мои заказы</h3>
           
@@ -57,7 +58,7 @@ export default async function Profile({ searchParams }: SearchParamProps) {
           page={eventsPage}
           totalPages={events.totalPages}
         />
-      </section>
+      </section>  */}
     </>
   )
 }

@@ -5,8 +5,11 @@ export interface IOrder {
   event: string,
   buyer: string,
   _id: string
+  meetDate: Date
 }
 export interface FullOrder {
   event: IEvent
   buyer: IUser
+  _id: string
+  meetDate: Date
 }

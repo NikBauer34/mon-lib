@@ -20,52 +20,24 @@ import register from '../api/register.action'
 import { DestructiveAlert } from '@/entities'
 import { useRouter } from 'next/navigation'
 
-const CheckoutButton = ({ event,  }: { event: UpdateEvent }) => {
+const CheckoutButton = ({ event, eventId, userData, InitUserId, initSubscribed }: { event: UpdateEvent, eventId: string, userData: IUser, InitUserId: string | null, initSubscribed:  {date: Date} | null}) => {
   const {status, data} = useSession()
-  console.log(event)
   let router = useRouter()
-  let [form, setForm] = useState<IUser>({username: '', name: '', surname: '', patronymic: '', email: '', phone: ''})
+  let [form, setForm] = useState<IUser>(userData)
   let [account, setAccount] = useState<{username: string, password: string}>({username: '', password: ''})
   let [isChecked, setChecked] = useState(true)
-  let [userId, setUserId] = useState('')
+  let [userId, setUserId] = useState(InitUserId ? InitUserId : '')
   let [isLoading, setLoading] = useState(true)
   let [isSuccess, setSuccess] = useState(false)
-  let [startDate, setStartDate] = useState(event.days.monday[0].startDate)
   let [datePickerError, setDatePickerError] = useState('')
   let [meetDate, setMeetDate] = useState(new Date())
   let [dayWeek, setDayWeek] = useState('next')
-  let [Subscribed, setSubscribed] = useState<{date: Date} | null>(null)
+  let [Subscribed, setSubscribed] = useState<{date: Date} | null>(initSubscribed)
   let [serverError, setServerError] = useState('')
-  // let onChangeDate = (date: Date) => {
 
-  // }
-  let setup = useMemo(() => {
-    if (status == 'authenticated') {
-      const getData = async () => {
-        console.log('No')
-        if (data?.user?.role == 'user') {
-          console.log('woww')
-          let userData = await getUserData(data.user.refreshToken)
-          if (userData !== null) {
-            setForm(userData)
-            console.log(userData)
-            let _id = await getUserId(data.user.refreshToken)
-            setUserId(_id)
-            let Data = await isSubscribed({eventId: event._id, access: data.user.refreshToken})
-            console.log(Data)
-            setSubscribed(Data)
-          }
-        }
-        setLoading(false)
-      }
-      getData()
-    } else if (status == 'unauthenticated') {
-      setLoading(false)
-    }
-  }, [status])
   const createAuthOrder = async () => {
     setLoading(true)
-    const order = await createOrder({buyer: userId, event: event._id, meetDate})
+    const order = await createOrder({buyer: userId, event: eventId, meetDate})
     setSuccess(true)
     toast({
       title: 'hi',
@@ -115,7 +87,7 @@ const CheckoutButton = ({ event,  }: { event: UpdateEvent }) => {
     console.log(user)
     let id = await getUserId(user.refreshToken)
     console.log(id)
-    const order = await createOrder({event: event._id, buyer: id, meetDate})
+    const order = await createOrder({event: eventId, buyer: id, meetDate})
     setSuccess(true)
     setLoading(false)
     router.push(`/sign-in?username=${account.username}`)
@@ -132,7 +104,7 @@ const CheckoutButton = ({ event,  }: { event: UpdateEvent }) => {
     console.log(user)
     let id = await getUserId(user.refreshToken)
     console.log(id)
-    const order = await createOrder({event: event._id, buyer: id, meetDate})
+    const order = await createOrder({event: eventId, buyer: id, meetDate})
     setSuccess(true)
     setLoading(false)
   }
@@ -145,6 +117,7 @@ const CheckoutButton = ({ event,  }: { event: UpdateEvent }) => {
   return (
     <div className="flex items-center gap-3">
         <>
+        <h1>{status}</h1>
         {status == 'unauthenticated' &&
           <AlertDialog>
           <AlertDialogTrigger className="p-medium-14 flex w-full rounded-sm py-3 pl-8 text-primary-500 hover:bg-primary-50 focus:text-primary-500">
@@ -183,7 +156,7 @@ const CheckoutButton = ({ event,  }: { event: UpdateEvent }) => {
                 <AlertDialogAction disabled={isLoading || Boolean(datePickerError) || Boolean(serverError)} onClick={async (e) => await AuthOrder(e)}>{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Запись</AlertDialogAction>
                   </AlertDialogFooter></AlertDialogContent></AlertDialog>
       }
-        {data?.user?.role == 'user' && !isSubscribed &&
+        {data?.user?.role == 'user' && !Subscribed &&
           <AlertDialog>
           <AlertDialogTrigger className="p-medium-14 flex w-full rounded-sm py-3 pl-8 text-primary-500 hover:bg-primary-50 focus:text-primary-500">
             <Button asChild className="button rounded-full" size="lg">

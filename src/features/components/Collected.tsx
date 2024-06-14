@@ -1,5 +1,5 @@
 "use client"
-import { ICategory } from "@/entities";
+import { ICategory, IEvent } from "@/entities";
 import { IUser } from "@/entities/User/types";
 import Card from "./Card";
 import Pagination from "./Pagination";
@@ -7,13 +7,13 @@ import { FullEvent } from "../api/get-related-events.action";
 import { useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function Collected({data, page, totalPages, changePage}: {data: FullEvent[], page: number, totalPages: number, changePage?: (el: number) => void}) {
+export default function Collected({data, page, totalPages, changePage}: {data: FullEvent[] | IEvent[], page: number, totalPages: number, changePage?: (el: number) => void}) {
   let [cardData, setCardData] = useState(data)
   let searchParams = useSearchParams()
   let pathname = usePathname()
   let router = useRouter()
   let onDelete = (index: number) => {
-    setCardData(data.filter((el, ind) => ind != index))
+    setCardData(data.filter((el, ind) => ind !== index) as (IEvent[] | FullEvent[]))
   }
   let change = (val: number) => {
     const params = new URLSearchParams(searchParams);
@@ -22,11 +22,11 @@ export default function Collected({data, page, totalPages, changePage}: {data: F
   }
   return (
     <>
-    {data.length > 0 ?
+    {cardData.length > 0 ?
     <>
       <div className="flex flex-col items-center gap-10">
       <ul className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:gap-10">
-        {data.map((event, index) => {
+        {cardData.map((event, index) => {
 
           return (
             <li key={event._id} className="flex justify-center">

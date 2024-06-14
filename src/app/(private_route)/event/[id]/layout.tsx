@@ -13,13 +13,21 @@ import { Phone, PhoneCall } from 'lucide-react';
 import getUserId from '@/features/api/get-user-id.action';
 import getRelatedEvents from '@/features/api/get-related-events.action';
 import Collected from '@/features/components/Collected';
+import getUserData from '@/features/api/get-user-data.action';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import isSubscribed from '@/features/api/is-subscribe.action';
 export type SearchParamProps = {
   params: { id: string }
   searchParams: { [key: string]: string | string[] | undefined }
 }
 const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) => {
+  const session = await getServerSession(authOptions)
+  const token = session?.user?.refreshToken
   const {event, category} = await getEvent({eventId: id});
   console.log(event.days.monday[0])
+  console.log('id')
+  console.log(id)
   let page = (searchParams?.page as string) || '1'
   const data = await getRelatedEvents({
     category: category,
@@ -27,7 +35,11 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
     page,
     limit: 3
   })
+  const usdata = await getUserData(token)
   let totalPages = data.totalPages
+  let userData = usdata ? usdata : {username: '', name: '', surname: '', patronymic: '', email: '', phone: ''}
+  let userId = await getUserId(token)
+  let subscribed = await isSubscribed({access: token, eventId: id})
   // const relatedEvents = await getRelatedEventsByCategory({
   //   category: category,
   //   eventId: event._id,
@@ -65,7 +77,7 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
             </div>
           </div>
 
-          <CheckoutButton event={event} />
+          <CheckoutButton event={event} eventId={id} userData={userData} InitUserId={userId} initSubscribed={subscribed}/>
 
           <div className="flex flex-col gap-5">
             <div className='flex gap-2 md:gap-3 '>

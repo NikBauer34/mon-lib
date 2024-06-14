@@ -8,10 +8,12 @@ import { FullOrder, IOrder } from "@/entities/Order/types"
 
 export async function getOrdersByUser({
   userId,
-  page
+  page,
+  limit
 } : {
   userId: string,
-  page: number
+  page: number,
+  limit: number
 }) {
   const res = await $api.post<{data: {el: IOrder, user: IUser, event: IEvent}[], totalPages: number}>(`/order/get-orders-by-user`, {userId, page, limit: 3})
   let events: FullOrder[] = []

@@ -10,19 +10,19 @@ export type FullEvent = {
         description: string;
         location: string;
         imageURL: string;
+        organizer: IMuseum
+        days: {
+          monday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          tuesday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          wednesday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          thursday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          friday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          saturday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[], 
+          sunday: {startDate: string, endDate: string, totalSpace: number, peopleCount: number}[]}
         category: ICategory;
         price: string;
         isFree: boolean;
-        organizer: IMuseum
-        phone: string
-        days: {
-          monday: {startDate: Date, endDate: Date}[], 
-          tuesday: {startDate: Date, endDate: Date}[], 
-          wednesday: {startDate: Date, endDate: Date}[], 
-          thursday: {startDate: Date, endDate: Date}[], 
-          friday: {startDate: Date, endDate: Date}[], 
-          saturday: {startDate: Date, endDate: Date}[], 
-          sunday: {startDate: Date, endDate: Date}[]}
+        phone: string;
 }
 export default async function getRelatedEvents({
   category,

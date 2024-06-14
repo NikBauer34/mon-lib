@@ -17,7 +17,7 @@ import Museum from '@/shared/images/portrait-ancient-roman-palace.jpg'
 import { JWT } from 'next-auth/jwt'
 import { IMuseum } from '@/entities/Museum/types'
 type CardProps = {
-  event: FullEvent,
+  event: (IEvent | FullEvent),
   hasOrderLink?: boolean,
   hidePrice?: boolean,
   index: number,
@@ -35,7 +35,8 @@ const Card = ({ event, hasOrderLink, hidePrice, index, onDelete }: CardProps) =>
   console.log(event._id)
   const getIsOrganized = async () => {
     const res = await isOrganizer({_id: event._id, access: data?.user?.refreshToken})
-    setEventCreator(res.is_organizer)
+    if (res?.is_organizer == undefined) setEventCreator(false)
+    else setEventCreator(res.is_organizer)
   }
   const setup = useMemo(() => {
     if (status == 'authenticated') {
@@ -76,12 +77,12 @@ const Card = ({ event, hasOrderLink, hidePrice, index, onDelete }: CardProps) =>
             {event.isFree ? 'FREE' : `$${event.price}`}
           </span>
           <p className="p-semibold-14 w-min rounded-full bg-grey-500/10 px-4 py-1 text-grey-500 line-clamp-1">
-            {event.category.name}
+            {typeof event.category == 'string' ? `${event.category}` : `${event.category.name}`}
           </p>
         </div>}
 
         <p className="p-medium-16 p-medium-18 text-grey-500">
-          {formatDateTime(event.days.monday[0].startDate).dateTime}
+          {event.days.monday[0].startDate} - {event.days.monday[0].endDate}
         </p>
 
         <Link href={`/event/${event._id}`}>
