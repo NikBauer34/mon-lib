@@ -5,6 +5,10 @@ const nextConfig = {
       protocol: 'https',
       hostname: 'storage.yandexcloud.net',
       port: ''
+    }, {
+      protocol: 'https',
+      hostname: 'xn--e1aogg7a.xn--p1ai',
+      port: ''
     }]
   }
 };

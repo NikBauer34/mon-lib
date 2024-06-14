@@ -22,7 +22,9 @@ export default function HeroSearch({museums, initEvents}: {museums: IMuseum[], i
   }
   let limit = 6
   let getEvents = async () => {
+    console.log('ev yeee')
     let data = await getLatest({museum, limit, page, regex})
+    console.log(data)
     setEvents(data.events)
     setTotalPages(data.totalPages)
   }

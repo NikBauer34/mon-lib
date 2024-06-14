@@ -1,4 +1,5 @@
 import { formatDateTime } from "@/entities/Event/helpers"
+import getExcelTables from "@/features/api/get-excel-tables.action"
 import getOrdersByEvent from "@/features/api/get-orders-by-event.action"
 import ParamSearch from "@/features/components/ParamSearch"
 
@@ -12,7 +13,7 @@ const Orders = async ({ searchParams, params }: SearchParamProps) => {
 
   const orders = await getOrdersByEvent({ eventId, searchString: searchText })
   console.log(orders[0])
-
+  // await getExcelTables({eventId: params.id})
   return (
     <>
       <section className=" bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">

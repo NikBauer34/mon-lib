@@ -10,10 +10,11 @@ import Link from "next/link";
 import Collected from "@/features/components/Collected";
 import { string } from "zod";
 import ParamSearch from "@/features/components/ParamSearch";
+import getEventsByMuseum from "@/features/api/get-events-by-museum.action";
 
 export default async function Profile({ searchParams }: SearchParamProps) {
-  // const session = await getServerSession(authOptions)
-  // const token = session?.user?.refreshToken
+  const session = await getServerSession(authOptions)
+  const token = session?.user?.refreshToken
 
   // const ordersPage = Number(searchParams?.ordersPage) || 1;
   // const eventsPage = Number(searchParams?.eventsPage) || 1;
@@ -23,6 +24,7 @@ export default async function Profile({ searchParams }: SearchParamProps) {
   // console.log(orderedEvents)
   // const events = await getEventsByUser({userId, page: eventsPage, limit: 6})
   const searchText = (searchParams?.text as string) || ''
+  const events = await getEventsByMuseum({access: token, searchString: searchText})
   return (
     <>
       {/* My Tickets */}
@@ -33,32 +35,16 @@ export default async function Profile({ searchParams }: SearchParamProps) {
         </div>
       </section>
       <section className="wrapper mt-8">
-        <ParamSearch />
-      </section>
-
-      {/* <section className="wrapper my-8">
-        <Collected
-          data={events.events}
-          page={eventsPage}
-          totalPages={events.totalPages}
-        />
-      </section>
-
-      {/* Events Organized */}
-      {/* <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
-        <div className="wrapper flex items-center justify-center sm:justify-between">
-          <h3 className='h3-bold text-center sm:text-left'>Мои заказы</h3>
-          
-        </div>
+        <ParamSearch placeholder="Поиск по названию"/>
       </section>
 
       <section className="wrapper my-8">
-      <Collected
-          data={orderedEvents}
-          page={eventsPage}
-          totalPages={events.totalPages}
+        <Collected
+          data={events}
+          page={1}
+          totalPages={1}
         />
-      </section>  */}
+      </section>
     </>
   )
 }

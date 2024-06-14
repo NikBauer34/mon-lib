@@ -9,10 +9,12 @@ export default async function isSubscribed({access, eventId}: {access: JWT, even
         Authorization: access
       }
     })
+    console.log(res.data)
     if (res.data) {
       return {date: new Date(res.data.date)}
     } else return null
   } catch (e: any) {
+    console.log(e)
     return null
   }
 }

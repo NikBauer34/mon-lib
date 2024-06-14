@@ -17,6 +17,8 @@ import getUserData from '@/features/api/get-user-data.action';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import isSubscribed from '@/features/api/is-subscribe.action';
+import { Button } from '@/shared';
+import Link from 'next/link';
 export type SearchParamProps = {
   params: { id: string }
   searchParams: { [key: string]: string | string[] | undefined }
@@ -36,10 +38,16 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
     limit: 3
   })
   const usdata = await getUserData(token)
+  console.log('useData')
+  console.log(usdata)
   let totalPages = data.totalPages
   let userData = usdata ? usdata : {username: '', name: '', surname: '', patronymic: '', email: '', phone: ''}
   let userId = await getUserId(token)
+  console.log('dsff')
+  console.log(token, id)
   let subscribed = await isSubscribed({access: token, eventId: id})
+  console.log('subs')
+  console.log(subscribed)
   // const relatedEvents = await getRelatedEventsByCategory({
   //   category: category,
   //   eventId: event._id,
@@ -148,9 +156,15 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
 
     {/* EVENTS with the same category */}
     <section className="wrapper my-8 flex flex-col gap-8 md:gap-12">
-      <h2 className="h2-bold">Также могут понравится</h2>
+      <div className='flex flex-col justify-between md:flex-row items-start'>
+        <h2 className="h2-bold mb-2">Также могут понравится</h2>
+        <Button asChild className="button rounded-full" size="lg">
+            <Link href='/'> На главную</Link>
+        </Button>
+      </div>
 
       <Collected data={data.events} page={Number(page)} totalPages={totalPages}/>
+      
     </section>
     </>
   )
